@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 5px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+
+
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-container {
+            transition: transform 0.25s ease;
+        }
+
+        .badge {
+            transition: all 0.2s ease;
+        }
+
+        .badge:hover {
+            filter: brightness(0.9);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px !important;
+            width: 100%;
+        }
+
+        .pagination-btn {
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover:not(.active) {
+            background-color: #e5e7eb;
+        }
+
+        .category-item.disabled {
+            opacity: 0.5;
+        }
+
+        .pie-chart-container {
+            position: relative;
+            height: 220px;
+            width: 220px;
+            margin: 0 auto;
+        }
+
+        .pie-chart-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .product-image {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #f3f4f6;
+        }
+
+        .card h2 {
+            font-size: 1.125rem;
+            /* text-lg */
+            margin-bottom: 0.5rem;
+        }
+
+        .product-image {
+            width: 56px;
+            height: 56px;
+        }
+
+        .space-y-4>* {
+            margin-bottom: 0.75rem !important;
+        }
+
+        .pagination-btn {
+            padding: 0.4rem 0.75rem;
+        }
+
+        .weekly-sales-container {
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Header/Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg class="h-8 w-8 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span class="ml-2 text-xl font-semibold text-gray-800">AdminDash</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button
+                        class="p-2 rounded-full text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none">
+                        <span class="sr-only">Notifications</span>
+                        <div class="relative">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span
+                                class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                        </div>
+                    </button>
+                    <div class="relative" id="profileDropdown">
+                        <button
+                            class="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 focus:outline-none"
+                            id="profileButton">
+                            <img class="h-8 w-8 rounded-full object-cover"
+                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E"
+                                alt="User profile">
+                            <span class="text-sm font-medium text-gray-700">Admin</span>
+                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden"
+                            id="profileMenu">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-4 lg:px-6 py-6">
+        <!-- Action Buttons -->
+        <div class="flex justify-end mb-6 space-x-3">
+            <button id="summaryBtn"
+                class="px-4 py-2 text-sm font-medium rounded-md bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm">
+                Summary
+            </button>
+            <button id="addItemBtn"
+                class="px-4 py-2 text-sm font-medium rounded-md bg-green-600 text-white hover:bg-green-700 shadow-sm">
+                Add Item
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            <!-- Pie Chart Section - 40% width -->
+            <div class="card bg-white rounded-xl shadow-sm p-4 lg:p-5 col-span-1 lg:col-span-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Product Categories</h2>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-start">
+                    <div id="categoryLegendList" class="pie-chart-legend mr-6 flex-shrink-0 w-full md:w-48">
+                        <!-- Legend will be inserted dynamically -->
+                    </div>
+                    <div class="pie-chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Area Chart Section - 60% width -->
+            <div class="card bg-white rounded-xl shadow-sm p-4 lg:p-5 col-span-1 lg:col-span-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Monthly Sales</h2>
+                    <div class="flex space-x-2">
+                        <button
+                            class="filter-btn active px-3 py-1 text-sm font-medium rounded-md bg-indigo-100 text-indigo-700"
+                            data-period="1">1M</button>
+                        <button
+                            class="filter-btn px-3 py-1 text-sm font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            data-period="3">3M</button>
+                        <button
+                            class="filter-btn px-3 py-1 text-sm font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            data-period="6">6M</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Weekly Sales Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 col-span-1 lg:col-span-3">
+                <!-- Stats Cards -->
+                <div class="space-y-4">
+                    <!-- Total Sales Widget -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-medium text-gray-500">Total Sales</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" id="salesGrowth">
+                                +0%
+                            </span>
+                        </div>
+                        <p class="mt-2 text-2xl font-semibold text-gray-900" id="totalSales">$0</p>
+                        <p class="mt-1 text-sm text-gray-500">vs. last month</p>
+                    </div>
+
+                    <!-- Orders Placed Widget -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-medium text-gray-500">Orders Placed</h3>
+                        </div>
+                        <p class="mt-2 text-2xl font-semibold text-gray-900" id="totalOrders">0</p>
+                        <p class="mt-1 text-sm text-gray-500">Total orders</p>
+                    </div>
+
+                    <!-- Customers Widget -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-medium text-gray-500">Total Customers</h3>
+                        </div>
+                        <p class="mt-2 text-2xl font-semibold text-gray-900">100</p>
+                        <p class="mt-1 text-sm text-gray-500">Active customers</p>
+                    </div>
+                </div>
+
+                <!-- Weekly Sales Chart -->
+                <div class="card bg-white rounded-xl shadow-sm p-4 lg:p-5 lg:col-span-3">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Weekly Sales</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="weeklySalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders List -->
+            <div class="card bg-white rounded-xl shadow-sm p-4 lg:p-5 col-span-1 lg:col-span-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Recent Orders</h2>
+                    <button class="text-sm text-indigo-600 hover:text-indigo-800">View All</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <input type="checkbox" id="selectAllCheckbox"
+                                        class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                                </th>
+                                <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                    id="productHeader">Product</th>
+                                <th
+                                    class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Price</th>
+                                <th
+                                    class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status</th>
+                                <th
+                                    class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex items-center justify-between mt-4">
+                    <div class="text-sm text-gray-500" id="paginationInfo">
+                        Showing 0 to 0 of 0 entries
+                    </div>
+                    <div class="flex space-x-1" id="paginationControls">
+                        <button class="pagination-btn px-3 py-1 text-sm rounded-md bg-gray-100 text-gray-700"
+                            id="prevPageBtn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+
+                        <!-- Pagination buttons will be injected here -->
+
+                        <button class="pagination-btn px-3 py-1 text-sm rounded-md bg-gray-100 text-gray-700"
+                            id="nextPageBtn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Top Selling Products -->
+            <div class="card bg-white rounded-xl shadow-sm p-6 col-span-1 lg:col-span-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Top Selling Products</h2>
+                    <button class="text-sm text-indigo-600 hover:text-indigo-800">View All</button>
+                </div>
+                <div class="space-y-4" id="productList">
+                    <div class="flex items-center p-3 rounded-lg border border-gray-200 hover:shadow-sm transition"></div>
+                     <!-- Top products will be dynamically inserted here -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Summary Modal -->
+    <div id="summaryModal" class="modal fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <div
+                class="modal-container inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Sales Summary</h3>
+                            <div class="grid grid-cols-1 gap-4 mb-6">
+                                <div class="bg-indigo-50 p-4 rounded-lg">
+                                    <p class="text-sm font-medium text-indigo-800">Total Sales</p>
+                                    <p class="text-2xl font-bold text-indigo-900">$24,389</p>
+                                </div>
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="text-sm font-medium text-blue-800">Orders Placed</p>
+                                    <p class="text-2xl font-bold text-blue-900">1,243</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <p class="text-sm font-medium text-purple-800">Total Customers</p>
+                                    <p class="text-2xl font-bold text-purple-900">892</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="downloadReportBtn"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Download Report
+                    </button>
+                    <button type="button"
+                        class="close-modal mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="modal fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <div
+                class="modal-container inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Add Sales Item</h3>
+                            <form id="addItemForm" class="space-y-4">
+                                <div>
+                                    <label for="itemName" class="block text-sm font-medium text-gray-700">Item
+                                        Name</label>
+                                    <input type="text" name="itemName" id="itemName"
+                                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border">
+                                </div>
+                                <div>
+                                    <label for="itemAmount"
+                                        class="block text-sm font-medium text-gray-700">Amount</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">$</span>
+                                        </div>
+                                        <input type="text" name="itemAmount" id="itemAmount"
+                                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md p-2 border">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="itemDate" class="block text-sm font-medium text-gray-700">Date</label>
+                                    <input type="date" name="itemDate" id="itemDate"
+                                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border">
+                                </div>
+                                <div>
+                                    <label for="itemCategory"
+                                        class="block text-sm font-medium text-gray-700">Category</label>
+                                    <select id="itemCategory" name="itemCategory"
+                                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <option value="electronics">Electronics</option>
+                                        <option value="clothing">Clothing</option>
+                                        <option value="home">Home & Garden</option>
+                                        <option value="beauty">Beauty</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="saveItemBtn"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Save Item
+                    </button>
+                    <button type="button"
+                        class="close-modal mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Initialization ---
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let totalPages = 1;
+        let ordersData = [];
+
+        let categoryChart;
+        let salesChart;
+        let weeklySalesChart;
+
+        async function renderCategoryChart() {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            try {
+                const res = await fetch('/products/categories');
+                const data = await res.json();
+                const total = data.reduce((acc, item) => acc + item.count, 0);
+                const labels = data.map(item => item.category);
+                const percentages = data.map(item => ((item.count / total) * 100).toFixed(0));
+                const colors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#6B7280'];
+
+                if (categoryChart) categoryChart.destroy();
+                categoryChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: percentages,
+                            backgroundColor: colors,
+                            borderColor: '#fff',
+                            borderWidth: 2,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `${ctx.label}: ${ctx.raw}%`
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const legendContainer = document.getElementById('categoryLegendList');
+                if (legendContainer) {
+                    legendContainer.innerHTML = '';
+                    data.forEach((item, index) => {
+                        const color = colors[index % colors.length];
+                        const percent = percentages[index];
+                        const li = document.createElement('li');
+                        li.className = 'flex items-center justify-between mb-1';
+                        li.innerHTML = `
+                            <div class="flex items-center">
+                                <span class="inline-block w-3 h-3 mr-2 rounded-full" style="background-color: ${color}"></span>
+                                <span class="text-sm text-gray-700">${item.category}</span>
+                            </div>
+                            <span class="text-sm font-semibold">${percent}%</span>
+                        `;
+                        legendContainer.appendChild(li);
+                    });
+                }
+
+            } catch (err) {
+                console.error('Failed to fetch categories:', err);
+            }
+        }
+
+        async function renderWeeklySalesChart() {
+            const ctx = document.getElementById('weeklySalesChart').getContext('2d');
+            try {
+                const res = await fetch('/sales/');
+                const sales = await res.json();
+
+                // Group sales by week
+                const weeklyData = {};
+                sales.forEach(s => {
+                    const date = new Date(s.sale_date);
+                    // Get the week start date (Sunday)
+                    const weekStart = new Date(date);
+                    weekStart.setDate(date.getDate() - date.getDay());
+                    const weekKey = weekStart.toISOString().split('T')[0];
+                    
+                    // Calculate total sales for the week
+                    weeklyData[weekKey] = (weeklyData[weekKey] || 0) + (s.price_at_sale * s.quantity);
+                });
+
+                // Sort weeks and get last 8 weeks of data
+                const sortedWeeks = Object.keys(weeklyData)
+                    .sort()
+                    .slice(-8);
+
+                const labels = sortedWeeks.map(week => {
+                    const date = new Date(week);
+                    return `Week of ${date.toLocaleDateString('default', { month: 'short', day: 'numeric' })}`;
+                });
+
+                const values = sortedWeeks.map(week => weeklyData[week]);
+
+                if (weeklySalesChart) weeklySalesChart.destroy();
+                weeklySalesChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Daily Sales',
+                            data: values,
+                            backgroundColor: (context) => {
+                                const gradient = context.chart.ctx.createLinearGradient(0, 0, 0, context.chart.height);
+                                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.9)');
+                                gradient.addColorStop(1, 'rgba(99, 102, 241, 0.4)');
+                                return gradient;
+                            },
+                            borderWidth: 0,
+                            borderRadius: {
+                                topLeft: 6,
+                                topRight: 6
+                            },
+                            maxBarThickness: 35,
+                            barPercentage: 0.5,
+                            categoryPercentage: 0.9
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 15,
+                                right: 15,
+                                bottom: 5,
+                                left: 15
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                border: {
+                                    display: false
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.03)',
+                                    drawBorder: false,
+                                    lineWidth: 1
+                                },
+                                ticks: {
+                                    callback: val => `$${val.toLocaleString()}`,
+                                    font: {
+                                        size: 12,
+                                        family: "'Inter', sans-serif"
+                                    },
+                                    padding: 8,
+                                    maxTicksLimit: 6,
+                                    color: 'rgba(0, 0, 0, 0.6)'
+                                }
+                            },
+                            x: {
+                                grid: { 
+                                    display: false 
+                                },
+                                border: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12,
+                                        family: "'Inter', sans-serif"
+                                    },
+                                    padding: 5,
+                                    color: 'rgba(0, 0, 0, 0.7)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: { 
+                                display: false 
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                titleColor: '#1F2937',
+                                bodyColor: '#1F2937',
+                                bodyFont: {
+                                    size: 11,
+                                    family: "'Inter', sans-serif"
+                                },
+                                titleFont: {
+                                    size: 12,
+                                    family: "'Inter', sans-serif",
+                                    weight: '600'
+                                },
+                                padding: {
+                                    x: 10,
+                                    y: 8
+                                },
+                                borderColor: 'rgba(0, 0, 0, 0.05)',
+                                borderWidth: 1,
+                                displayColors: false,
+                                callbacks: {
+                                    title: (items) => items[0].label,
+                                    label: (context) => `Revenue: $${context.raw.toLocaleString()}`
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 500,
+                            easing: 'easeOutQuart'
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        hover: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to fetch weekly sales data:', err);
+            }
+        }
+
+        async function renderSalesChart(months = 6) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            try {
+                const res = await fetch(`/sales/?months=${months}`);
+                const sales = await res.json();
+
+                const monthlyData = {};
+                sales.forEach(s => {
+                    const d = new Date(s.sale_date);
+                    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    monthlyData[key] = (monthlyData[key] || 0) + (s.price_at_sale * s.quantity);
+                });
+
+                const sortedKeys = Object.keys(monthlyData).sort();
+                const labels = sortedKeys.map(k => new Date(k + '-01').toLocaleString('default', { month: 'short' }));
+                const values = sortedKeys.map(k => monthlyData[k]);
+
+                if (salesChart) salesChart.destroy();
+                salesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Sales',
+                            data: values,
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: val => `$${val}`
+                                }
+                            },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to fetch sales data:', err);
+            }
+        }
+
+        async function renderTopSellingProducts() {
+            try {
+                const res = await fetch('/sales/');
+                const sales = await res.json();
+
+                // Group sales by product ID and accumulate quantity sold
+                const productSales = {};
+                sales.forEach(sale => {
+                    const p = sale.product;
+                    if (!productSales[p.id]) {
+                        productSales[p.id] = {
+                            name: p.name,
+                            price: p.price,
+                            image_url: p.image_url,
+                            sold: 0
+                        };
+                    }
+                    productSales[p.id].sold += sale.quantity;
+                });
+
+                // Get top 3 sold products
+                const topProducts = Object.values(productSales)
+                    .sort((a, b) => b.sold - a.sold)
+                    .slice(0, 3);
+
+                const productList = document.getElementById('productList');
+                productList.innerHTML = '';
+
+                topProducts.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 shadow-sm transition';
+                    item.innerHTML = `
+                <div class="flex-shrink-0">
+                    <img src="/${p.image_url}" alt="${p.name}" class="h-12 w-12 object-contain rounded" />
+                </div>
+                <div class="ml-4 flex-1">
+                    <h3 class="text-sm font-medium text-gray-900">${p.name}</h3>
+                    <p class="text-sm text-gray-500">$${p.price.toFixed(2)}</p>
+                    <div class="flex items-center mt-1">
+                        <span class="text-xs font-medium text-gray-700">Sold: ${p.sold} units</span>
+                    </div>
+                </div>
+            `;
+                    productList.appendChild(item);
+                });
+            } catch (err) {
+                console.error('Failed to fetch top selling products:', err);
+            }
+        }
+
+        async function updateStatsWidgets() {
+            try {
+                const res = await fetch('/sales/');
+                const sales = await res.json();
+
+                // Calculate total sales
+                const totalSalesAmount = sales.reduce((total, sale) => total + (sale.price_at_sale * sale.quantity), 0);
+                
+                // Calculate last month's sales
+                const now = new Date();
+                const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                
+                const lastMonthSales = sales
+                    .filter(sale => {
+                        const saleDate = new Date(sale.sale_date);
+                        return saleDate >= lastMonth && saleDate < thisMonth;
+                    })
+                    .reduce((total, sale) => total + (sale.price_at_sale * sale.quantity), 0);
+
+                const thisMonthSales = sales
+                    .filter(sale => {
+                        const saleDate = new Date(sale.sale_date);
+                        return saleDate >= thisMonth;
+                    })
+                    .reduce((total, sale) => total + (sale.price_at_sale * sale.quantity), 0);
+
+                // Calculate growth percentage
+                const growthPercentage = lastMonthSales ? ((thisMonthSales - lastMonthSales) / lastMonthSales) * 100 : 0;
+
+                // Update total sales widget
+                document.getElementById('totalSales').textContent = `$${totalSalesAmount.toLocaleString()}`;
+                const growthElement = document.getElementById('salesGrowth');
+                growthElement.textContent = `${growthPercentage >= 0 ? '+' : ''}${growthPercentage.toFixed(1)}%`;
+                growthElement.className = `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    growthPercentage >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`;
+
+                // Update total orders widget
+                document.getElementById('totalOrders').textContent = sales.length.toLocaleString();
+
+            } catch (err) {
+                console.error('Failed to update stats widgets:', err);
+            }
+        }
+
+        // --- FILTER BUTTONS ---
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'bg-indigo-100', 'text-indigo-700'));
+                this.classList.add('active', 'bg-indigo-100', 'text-indigo-700');
+                renderSalesChart(this.getAttribute('data-period'));
+            });
+        });
+
+        // --- RECENT ORDERS ---
+        async function fetchAndRenderRecentOrders() {
+            try {
+                const [salesRes, productsRes] = await Promise.all([
+                    fetch('/sales/'),
+                    fetch('/products')
+                ]);
+                const sales = await salesRes.json();
+                const products = await productsRes.json();
+
+                const productMap = {};
+                products.forEach(p => {
+                    productMap[p.id] = {
+                        name: p.name,
+                        price: p.price,
+                        stock: Number(p.status)
+                    };
+                });
+
+                // Group and sort by sale date (desc)
+                const recent = sales
+                    .sort((a, b) => new Date(b.sale_date) - new Date(a.sale_date))
+                    .map(sale => {
+                        const product = productMap[sale.product_id];
+                        return {
+                            product: product.name,
+                            price: `$${sale.price_at_sale.toFixed(2)}`,
+                            quantity: sale.quantity,
+                            stock: product.stock - sale.quantity
+                        };
+                    });
+
+                ordersData = recent;
+                totalPages = Math.ceil(ordersData.length / itemsPerPage);
+                currentPage = 1;
+                renderOrdersTable();
+                renderPaginationControls();
+            } catch (err) {
+                console.error('Failed to load recent orders:', err);
+            }
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            const pageInfo = document.getElementById('paginationInfo');
+            tbody.innerHTML = '';
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = Math.min(start + itemsPerPage, ordersData.length);
+            const currentData = ordersData.slice(start, end);
+
+            currentData.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-3"><input type="checkbox" class="order-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded"></td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${order.product}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${order.price}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="px-2 inline-flex text-xs font-semibold rounded-full ${order.stock > 10 ? 'bg-green-100 text-green-800'
+                        : order.stock > 0 ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                    }">
+                            ${order.stock > 10 ? 'In Stock' : order.stock > 0 ? 'Low Stock' : 'Out of Stock'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${order.quantity}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            pageInfo.textContent = `Showing ${start + 1} to ${end} of ${ordersData.length} entries`;
+        }
+
+        function renderPaginationControls() {
+            const container = document.getElementById('paginationControls');
+            container.querySelectorAll('[data-page]').forEach(btn => btn.remove());
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `pagination-btn px-3 py-1 text-sm rounded-md ${i === currentPage ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'
+                    }`;
+                btn.setAttribute('data-page', i);
+                btn.textContent = i;
+                btn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderOrdersTable();
+                    renderPaginationControls();
+                });
+                container.insertBefore(btn, document.getElementById('nextPageBtn'));
+            }
+
+            document.getElementById('prevPageBtn').disabled = currentPage === 1;
+            document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
+
+            document.getElementById('prevPageBtn').onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderOrdersTable();
+                    renderPaginationControls();
+                }
+            };
+            document.getElementById('nextPageBtn').onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderOrdersTable();
+                    renderPaginationControls();
+                }
+            };
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategoryChart();
+            renderSalesChart();
+            renderWeeklySalesChart();
+            updateStatsWidgets();
+            fetchAndRenderRecentOrders();
+            renderTopSellingProducts();
+        });
+    </script>
+
+
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'94122651c6282e9c',t:'MTc0NzQ3NDc4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

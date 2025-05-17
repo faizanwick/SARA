@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Record Daily Sales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Record Daily Sales</h1>
+            <p class="text-gray-600">Enter sales information for your products below</p>
+        </header>
+
+        <div class="mb-6 flex justify-start items-center">
+            <div class="flex space-x-2">
+                <button id="view-cards" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active">
+                    <i class="fas fa-th-large mr-2"></i>Card View
+                </button>
+                <button id="view-table" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                    <i class="fas fa-table mr-2"></i>Table View
+                </button>
+            </div>
+            <!-- Removed Submit All button -->
+        </div>
+
+        <div id="card-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <div id="table-view" class="overflow-x-auto hidden">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Product</th>
+                        <th class="py-3 px-4 text-left">Price</th>
+                        <th class="py-3 px-4 text-left">Quantity</th>
+                        <th class="py-3 px-4 text-left">Sale Price</th>
+                        <th class="py-3 px-4 text-left">Date</th>
+                        <th class="py-3 px-4 text-left">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="success-message"
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                        <i class="fas fa-check text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sales Recorded Successfully!</h3>
+                    <p class="text-gray-600 mb-6">Your sales data has been submitted successfully.</p>
+                    <button id="close-success"
+                        class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            let products = [];
+
+            async function fetchProducts() {
+                try {
+                    const res = await fetch('/products');
+                    if (!res.ok) throw new Error('Failed to fetch products');
+                    products = await res.json();
+                    generateCardView();
+                    generateTableView();
+                } catch (err) {
+                    console.error("Error fetching products:", err);
+                    alert("Could not load products. See console for details.");
+                }
+            }
+
+            function generateCardView() {
+                const cardView = document.getElementById('card-view');
+                cardView.innerHTML = '';
+                products.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'card bg-white rounded-lg overflow-hidden shadow-md p-6 border border-gray-200';
+                    card.innerHTML = `
+              <div class="flex items-center mb-4">
+                <img src="/${product.image_url}" alt="${product.name}" class="w-12 h-12 object-contain mr-4">
+                <div class="flex-1">
+                  <h3 class="font-bold text-lg text-gray-800">${product.name}</h3>
+                  <p class="text-sm text-gray-500">$${(product.price ?? 0).toFixed(2)}</p>
+                </div>
+                <button class="delete-product text-red-600 hover:text-red-800 p-2" data-product-id="${product.id}">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                  <input type="number" min="1" value="1" class="w-full px-3 py-2 border border-gray-300 rounded-md" data-product-id="${product.id}" data-field="quantity">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Price at Sale</label>
+                  <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+                    <input type="number" step="0.01" value="${(product.price ?? 0).toFixed(2)}" class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md" data-product-id="${product.id}" data-field="salePrice">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Sale Date</label>
+                  <input type="date" value="${today}" class="w-full px-3 py-2 border border-gray-300 rounded-md" data-product-id="${product.id}" data-field="saleDate">
+                </div>
+                <button class="submit-sale w-full mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" data-product-id="${product.id}">
+                  Submit Sale
+                </button>
+              </div>
+            `;
+                    cardView.appendChild(card);
+                });
+            }
+
+            function generateTableView() {
+                const tableBody = document.querySelector('#table-view tbody');
+                tableBody.innerHTML = '';
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b hover:bg-gray-50';
+                    row.innerHTML = `
+              <td class="py-3 px-4">
+                <div class="flex items-center">
+                  <img src="/${product.image_url}" alt="${product.name}" class="w-10 h-10 object-contain mr-3">
+                  <span class="font-bold text-gray-800">${product.name}</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-gray-500">$${(product.price ?? 0).toFixed(2)}</td>
+              <td class="py-3 px-4">
+                <input type="number" min="1" value="1" class="w-20 px-2 py-1 border border-gray-300 rounded-md" data-product-id="${product.id}" data-field="quantity">
+              </td>
+              <td class="py-3 px-4">
+                <div class="relative w-32">
+                  <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-500">$</span>
+                  <input type="number" step="0.01" value="${(product.price ?? 0).toFixed(2)}" class="w-full pl-6 pr-2 py-1 border border-gray-300 rounded-md" data-product-id="${product.id}" data-field="salePrice">
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <input type="date" value="${today}" class="px-2 py-1 border border-gray-300 rounded-md" data-product-id="${product.id}" data-field="saleDate">
+              </td>
+              <td class="py-3 px-4">
+                <div class="flex space-x-2">
+                  <button class="submit-sale px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700" data-product-id="${product.id}">
+                    Submit
+                  </button>
+                  <button class="delete-product px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700" data-product-id="${product.id}">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            async function submitSale(productId) {
+                const product = products.find(p => p.id == productId);
+                const quantity = document.querySelector(`[data-product-id="${productId}"][data-field="quantity"]`).value;
+                const salePrice = document.querySelector(`[data-product-id="${productId}"][data-field="salePrice"]`).value;
+                const saleDate = document.querySelector(`[data-product-id="${productId}"][data-field="saleDate"]`).value;
+
+                const saleData = {
+                    product_id: productId,
+                    quantity: Number(quantity),
+                    price_at_sale: Number(salePrice),
+                    sale_date: saleDate
+                };
+
+                try {
+                    const res = await fetch('/sales/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(saleData)
+                    });
+
+                    if (!res.ok) throw new Error("Sale submission failed");
+
+                    console.log(`✅ Sale saved:`, await res.json());
+                    document.getElementById('success-message').classList.remove('hidden');
+
+                } catch (err) {
+                    console.error("❌ Error submitting sale:", err);
+                    alert("Error submitting sale. See console for details.");
+                }
+            }
+
+            // View toggles
+            const viewCards = document.getElementById('view-cards');
+            if (viewCards) {
+                viewCards.addEventListener('click', () => {
+                    document.getElementById('card-view').classList.remove('hidden');
+                    document.getElementById('table-view').classList.add('hidden');
+                });
+            }
+
+            const viewTable = document.getElementById('view-table');
+            if (viewTable) {
+                viewTable.addEventListener('click', () => {
+                    document.getElementById('card-view').classList.add('hidden');
+                    document.getElementById('table-view').classList.remove('hidden');
+                });
+            }
+
+            // Success message close button
+            const closeBtn = document.getElementById('close-success');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    document.getElementById('success-message').classList.add('hidden');
+                });
+            }
+
+            // Delete product functionality
+            async function deleteProduct(productId) {
+                if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                    return;
+                }
+
+                try {
+                    // Delete the product (this will cascade delete sales records due to our DB setup)
+                    const productRes = await fetch(`/products/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!productRes.ok) {
+                        const error = await productRes.json();
+                        throw new Error(error.detail || 'Failed to delete product');
+                    }
+
+                    // Remove product from local array
+                    products = products.filter(p => p.id != productId);
+                    
+                    // Refresh both views
+                    generateCardView();
+                    generateTableView();
+
+                    // Show success message
+                    const successMsg = document.getElementById('success-message');
+                    const successTitle = successMsg.querySelector('h3');
+                    const successText = successMsg.querySelector('p');
+                    successTitle.textContent = 'Product Deleted Successfully!';
+                    successText.textContent = 'The product has been removed from the database.';
+                    successMsg.classList.remove('hidden');
+
+                    // Refresh the page after a short delay to ensure everything is updated
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+
+                } catch (err) {
+                    console.error("Error deleting product:", err);
+                    alert("Failed to delete product: " + err.message);
+                }
+            }
+
+            // Event delegation for delete buttons
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.delete-product')) {
+                    const button = e.target.closest('.delete-product');
+                    const productId = button.getAttribute('data-product-id');
+                    deleteProduct(productId);
+                }
+                if (e.target.classList.contains('submit-sale')) {
+                    const productId = e.target.getAttribute('data-product-id');
+                    submitSale(productId);
+                }
+            });
+
+            fetchProducts();
+        });
+    </script>
+</body>
+
+</html>
