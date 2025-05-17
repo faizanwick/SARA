@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SARA - Smart Analytics for Retail Advantage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .prediction-card {
+            transition: all 0.3s ease;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-indigo-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <h1 class="text-2xl font-bold">SARA</h1>
+                </div>
+                <div class="text-sm">Smart Analytics for Retail Advantage</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Dashboard Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800">Predictive Sales Analysis</h2>
+                    <p class="text-gray-600">Forecasting best-selling products for the next 30 days</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                    <div class="relative">
+                        <select id="timeframe"
+                            class="bg-white border border-gray-300 rounded-md px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700">
+                            <option value="30">Next 30 Days</option>
+                            <option value="60">Next 60 Days</option>
+                            <option value="90">Next 90 Days</option>
+                        </select>
+                    </div>
+                    <button id="refresh-btn"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 my-4">
+                <label for="csvUpload" class="font-semibold">Upload CSV File:</label>
+                <input type="file" id="csvUpload" accept=".csv" class="border border-gray-300 rounded-md px-2 py-1" />
+                <button id="submitCSV" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
+                    Submit
+                </button>
+            </div>
+
+
+            <!-- Prediction Summary -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Prediction Summary</h3>
+                    <div class="mt-2 md:mt-0 text-sm text-gray-500">Last updated: <span id="last-updated">Never</span></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-indigo-50 rounded-lg p-4">
+                        <div class="text-indigo-600 font-medium">Predicted Revenue</div>
+                        <div class="text-2xl font-bold mt-2">$0</div>
+                        <div class="flex items-center mt-1 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 trend-up mr-1 hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="trend-value">Awaiting data...</span>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <div class="text-purple-600 font-medium">Predicted Units</div>
+                        <div class="text-2xl font-bold mt-2">0</div>
+                        <div class="flex items-center mt-1 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 trend-up mr-1 hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="trend-value">Awaiting data...</span>
+                        </div>
+                    </div>
+                    <div class="bg-teal-50 rounded-lg p-4">
+                        <div class="text-teal-600 font-medium">Prediction Confidence</div>
+                        <div class="text-2xl font-bold mt-2">0%</div>
+                        <div class="flex items-center mt-1 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 trend-up mr-1 hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="trend-value">Awaiting data...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prediction Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6">Sales Trend Prediction</h3>
+                <div class="h-80">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Best Selling Products -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Predicted Best-Selling Products</h3>
+                </div>
+                <div id="bestSellersContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Products will be dynamically inserted here -->
+                    <div class="prediction-card bg-gray-50 rounded-lg p-4 border border-gray-200 text-center">
+                        <p class="text-gray-500">Upload a CSV file to see predictions</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-50 border-t border-gray-200 py-6">
+            <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+                <p>© 2023 SARA - Smart Analytics for Retail Advantage</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize the prediction chart with empty data
+        const ctx = document.getElementById('predictionChart').getContext('2d');
+        const predictionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Predicted Sales',
+                    data: [],
+                        borderColor: 'rgb(79, 70, 229)',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Predicted Units'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Refresh button functionality
+        document.getElementById('refresh-btn').addEventListener('click', function () {
+            // Simulate data refresh
+            const loadingText = 'Refreshing...';
+            const originalText = this.innerHTML;
+            this.innerHTML = `
+                <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Refreshing...
+            `;
+            this.disabled = true;
+
+            setTimeout(() => {
+                // Update last updated time
+                const now = new Date();
+                const options = {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                document.getElementById('last-updated').textContent = now.toLocaleDateString('en-US', options);
+
+                // Reset button
+                this.innerHTML = originalText;
+                this.disabled = false;
+
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg';
+                notification.textContent = 'Prediction data refreshed successfully!';
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }, 1500);
+        });
+
+        // Timeframe selector functionality
+        document.getElementById('timeframe').addEventListener('change', function () {
+            const days = this.value;
+            // In a real app, this would fetch new prediction data for the selected timeframe
+            console.log(`Fetching prediction data for next ${days} days`);
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'93ec379cd0152e9d',t:'MTc0NzA3NzAzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+<script>
+    document.getElementById('submitCSV').addEventListener('click', function () {
+        const fileInput = document.getElementById('csvUpload');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please select a CSV file before submitting.');
+            return;
+        }
+
+        // Get selected timeframe
+        const timeframe = document.getElementById('timeframe').value;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('timeframe', timeframe);  // Add timeframe to form data
+
+        // Show loading state
+        this.disabled = true;
+        this.innerHTML = `
+            <svg class="animate-spin h-4 w-4 mr-2 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Processing ${timeframe}-day prediction...
+        `;
+
+        fetch('/api/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Network response was not OK");
+            return response.json();
+        })
+        .then(data => {
+            console.log('Prediction result:', data);
+            
+            // Update prediction summary
+            updatePredictionSummary(data.prediction_summary);
+            
+            // Update sales trend chart
+            updateSalesTrendChart(data.sales_trend, timeframe);
+            
+            // Update best-selling products
+            updateBestSellingProducts(data.best_selling_products);
+
+            // Update last updated time
+            const now = new Date();
+            document.getElementById('last-updated').textContent = now.toLocaleString();
+
+            // Show success message
+            showNotification(`${timeframe}-day predictions updated successfully!`, 'success');
+        })
+        .catch(error => {
+            console.error('Error during prediction request:', error);
+            showNotification('Failed to process the CSV file.', 'error');
+        })
+        .finally(() => {
+            // Reset button state
+            const submitButton = document.getElementById('submitCSV');
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Submit';
+        });
+    });
+
+    // Function to update prediction summary cards
+    function updatePredictionSummary(summary) {
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        });
+
+        // Update revenue
+        const revenueCard = document.querySelector('.bg-indigo-50');
+        revenueCard.querySelector('.text-2xl').textContent = formatter.format(summary.predicted_revenue);
+        
+        // Update units
+        const unitsCard = document.querySelector('.bg-purple-50');
+        unitsCard.querySelector('.text-2xl').textContent = summary.predicted_units.toLocaleString();
+        
+        // Update confidence
+        const confidenceCard = document.querySelector('.bg-teal-50');
+        confidenceCard.querySelector('.text-2xl').textContent = `${summary.prediction_confidence.toFixed(1)}%`;
+
+        // Update trend indicators and values (if available in the API response)
+        document.querySelectorAll('.trend-value').forEach(el => {
+            el.textContent = 'Updated with latest data';
+        });
+    }
+
+    // Function to update sales trend chart
+    function updateSalesTrendChart(salesTrend, timeframe) {
+        const dates = salesTrend.map(item => {
+            const date = new Date(item.date);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
+        const units = salesTrend.map(item => item.predicted_units);
+
+        // Update chart configuration
+        predictionChart.data.labels = dates;
+        predictionChart.data.datasets[0].label = `${timeframe}-Day Sales Prediction`;
+        predictionChart.data.datasets[0].data = units;
+
+        // Update chart options
+        predictionChart.options.scales.x.title.text = `Next ${timeframe} Days`;
+        
+        // If we have many data points, show fewer x-axis labels
+        if (dates.length > 20) {
+            predictionChart.options.scales.x.ticks = {
+                autoSkip: true,
+                maxTicksLimit: 20
+            };
+        }
+
+        predictionChart.update();
+    }
+
+    // Function to update best-selling products
+    function updateBestSellingProducts(bestSellers) {
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        });
+
+        const container = document.getElementById('bestSellersContainer');
+        container.innerHTML = ''; // Clear existing cards
+
+        if (!bestSellers || bestSellers.length === 0) {
+            container.innerHTML = `
+                <div class="prediction-card bg-gray-50 rounded-lg p-4 border border-gray-200 text-center">
+                    <p class="text-gray-500">No prediction data available</p>
+                </div>
+            `;
+            return;
+        }
+
+        bestSellers.forEach((product, index) => {
+            const colors = ['indigo', 'purple', 'teal', 'amber', 'rose', 'emerald'];
+            const color = colors[index % colors.length];
+
+            const card = `
+                <div class="prediction-card bg-gradient-to-br from-${color}-50 to-white rounded-lg p-4 border border-${color}-100">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="text-xs font-medium text-${color}-600 mb-1">Category: ${product.category}</div>
+                            <h4 class="font-semibold text-gray-800 mb-2">${product.product_name}</h4>
+                            <div class="flex items-center mb-3">
+                                <div class="text-sm font-medium text-gray-600 mr-3">Confidence:</div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-${color}-600 h-2 rounded-full" style="width: ${product.confidence}%"></div>
+                                </div>
+                                <div class="text-sm font-medium text-gray-800 ml-2">${product.confidence}%</div>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <div>
+                                    <div class="text-gray-600">Predicted Units</div>
+                                    <div class="font-semibold">${product.predicted_units.toLocaleString()}</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-600">Predicted Revenue</div>
+                                    <div class="font-semibold">${formatter.format(product.predicted_revenue)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += card;
+        });
+    }
+
+    // Function to show notifications
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Timeframe selector functionality
+    document.getElementById('timeframe').addEventListener('change', function () {
+        const fileInput = document.getElementById('csvUpload');
+        const file = fileInput.files[0];
+        
+        if (file) {
+            // If a file is already uploaded, trigger prediction with new timeframe
+            document.getElementById('submitCSV').click();
+        }
+    });
+</script>
+
+</body>
+
+</html>

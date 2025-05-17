@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, date
-from typing import List
+from typing import List, Dict
+from pydantic import BaseModel
 
 
 # Shared product fields
@@ -58,3 +59,27 @@ class SaleSummary(BaseModel):
     total_customers: int
     customer_growth: float
     top_categories: List[str]
+
+
+# Adnan's code
+class PredictionSummary(BaseModel):
+    predicted_revenue: float
+    predicted_units: int
+    prediction_confidence: float
+
+class TrendPoint(BaseModel):
+    period: str
+    value: int
+
+class SalesTrend(BaseModel):
+    labels: List[str]
+    data: List[int]
+
+class BestSeller(BaseModel):
+    product: str
+    total_units: int
+
+class PredictionResponse(BaseModel):
+    summary: PredictionSummary
+    trend: SalesTrend
+    best_sellers: List[BestSeller]
