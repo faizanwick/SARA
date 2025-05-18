@@ -129,11 +129,11 @@ def read_index(request: Request):
 def marketing_strategies(request: Request):
     return templates.TemplateResponse("marketing-strategies.html", {"request": request})
 
-@app.get("/profit-analysis", response_class=HTMLResponse)
+@app.get("/profit", response_class=HTMLResponse)
 async def profit_analysis(request: Request):
     return templates.TemplateResponse("profit.html", {"request": request})
 
-@app.post("/analyze-profit")
+@app.post("/profit")
 async def upload_file(request: Request, file: UploadFile = File(...)):
     if not file.filename.endswith('.csv'):
         return templates.TemplateResponse(

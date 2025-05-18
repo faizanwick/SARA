@@ -1,0 +1,17 @@
+product_id,category,cost_price,selling_price,units_sold
+CELL,Electronics,200,270,150
+JEANS,Fashion,150,180,300
+FLOWERS,Home Decor,90,140,60
+PENCIL,Stationery,20,25,500
+SOFA COVER,Furniture,700,800,15
+PAN,Kitchenware,80,130,25
+CARS,Toys,40,50,250
+ANAS,Books,100,115,40
+SPINNER,Gadgets,500,520,180
+LIPSTICK,Beauty,60,95,10
+BOTTLE,Accessories,30,75,200
+CHIPS,Groceries,40,55,400
+BULB,Electronics,600,620,5
+SHIRTS,Fashion,250,300,120
+PEN ,Stationery,15,18,50
+.,,,,
