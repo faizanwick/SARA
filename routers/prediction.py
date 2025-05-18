@@ -1,11 +1,13 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Form
+from fastapi import APIRouter, HTTPException, Form, Query
 from predictor import SalesPredictor
 import pandas as pd
-from io import StringIO
-import json
 from typing import Dict, Any
 import logging
-import traceback
+from sqlalchemy.orm import Session
+from database import get_db
+from fastapi import Depends
+from models import Product, Sale
+from datetime import datetime, timedelta
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,12 +16,12 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 predictor = SalesPredictor()
 
-@router.post("/predict")
+@router.get("/predict")
 async def predict_sales(
-    file: UploadFile = File(...),
-    timeframe: int = Form(default=30)  # Accept timeframe as form data
+    timeframe: int = Query(default=30, description="Prediction timeframe in days"),
+    db: Session = Depends(get_db)
 ) -> Dict[Any, Any]:
-    logger.info(f"Received file: {file.filename} with timeframe: {timeframe}")
+    logger.info(f"Generating prediction for timeframe: {timeframe}")
     
     # Validate timeframe
     if timeframe not in [30, 60, 90]:
@@ -28,30 +30,31 @@ async def predict_sales(
             detail="Timeframe must be 30, 60, or 90 days"
         )
     
-    if not file.filename.endswith('.csv'):
-        raise HTTPException(status_code=400, detail="Only CSV files are allowed")
-    
     try:
-        # Read the CSV file
-        contents = await file.read()
-        logger.debug("File read successfully")
+        # Get all products and their sales
+        products = db.query(Product).all()
         
-        try:
-            df = pd.read_csv(StringIO(contents.decode('utf-8')))
-            logger.debug(f"CSV parsed successfully. Columns: {df.columns.tolist()}")
-        except Exception as e:
-            logger.error(f"Error parsing CSV: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Error parsing CSV file: {str(e)}")
+        # Prepare data for prediction
+        data = []
+        for product in products:
+            # Get sales for this product
+            sales = db.query(Sale).filter(Sale.product_id == product.id).all()
+            
+            # Calculate overall sales
+            overall_sales = sum(sale.quantity for sale in sales)
+            
+            # Get the most recent sale date or use product creation date
+            latest_sale = max((sale.sale_date for sale in sales), default=product.created_at)
+            
+            data.append({
+                'product_name': product.name,
+                'price': product.price,
+                'overall_sales': overall_sales,
+                'date': latest_sale.strftime('%Y-%m-%d')
+            })
         
-        # Validate required columns
-        required_columns = ['product_name', 'price', 'overall_sales', 'date']
-        missing_columns = [col for col in required_columns if col not in df.columns]
-        if missing_columns:
-            logger.error(f"Missing columns: {missing_columns}")
-            raise HTTPException(
-                status_code=400, 
-                detail=f"Missing required columns: {', '.join(missing_columns)}"
-            )
+        # Convert to DataFrame
+        df = pd.DataFrame(data)
         
         logger.debug(f"Generating predictions for {timeframe} days...")
         # Generate predictions with specified timeframe
@@ -59,7 +62,7 @@ async def predict_sales(
             predictions = predictor.predict(df, timeframe)
             logger.debug("Predictions generated successfully")
         except Exception as e:
-            logger.error(f"Error in prediction: {str(e)}\n{traceback.format_exc()}")
+            logger.error(f"Error in prediction: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error generating predictions: {str(e)}")
         
         response_data = {
@@ -75,5 +78,5 @@ async def predict_sales(
         return response_data
         
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}\n{traceback.format_exc()}")
+        logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e)) 

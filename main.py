@@ -1,9 +1,9 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Request
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.requests import Request
-from database import engine
+from database import engine, get_db
 import models
 from routers import products, sales, prediction
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,6 +13,7 @@ import os
 import shutil
 import numpy as np
 from typing import List, Dict, Any
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
@@ -134,31 +135,50 @@ async def profit_analysis(request: Request):
     return templates.TemplateResponse("profit.html", {"request": request})
 
 @app.post("/profit")
-async def upload_file(request: Request, file: UploadFile = File(...)):
-    if not file.filename.endswith('.csv'):
-        return templates.TemplateResponse(
-            "profit.html", 
-            {"request": request, "error": "Please upload a valid CSV file"}
-        )
-    
+async def analyze_profit_data(request: Request, db: Session = Depends(get_db)):
     try:
-        # Save uploaded file
-        file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+        # Get all products and their sales
+        products = db.query(models.Product).all()
         
-        # Process the file
-        df = pd.read_csv(file_path)
-        required_columns = ['product_id', 'category', 'cost_price', 'selling_price', 'units_sold']
+        # Prepare data for analysis
+        data = []
+        for product in products:
+            # Get all sales for this product
+            sales = db.query(models.Sale).filter(models.Sale.product_id == product.id).all()
+            
+            # Calculate total units sold
+            total_units = sum(sale.quantity for sale in sales)
+            
+            # For each product, we'll consider:
+            # - cost_price: the original price set in /input (product.price)
+            # - selling_price: average of actual sale prices from /sales-input
+            if total_units > 0:
+                # Calculate weighted average of actual selling prices
+                total_revenue = sum(sale.price_at_sale * sale.quantity for sale in sales)
+                avg_selling_price = total_revenue / total_units
+            else:
+                # If no sales, use current price as selling price
+                avg_selling_price = product.price
+            
+            data.append({
+                'product_id': product.id,
+                'category': product.category,
+                'cost_price': product.price,  # Original price from /input
+                'selling_price': avg_selling_price,  # Average price from actual sales
+                'units_sold': total_units
+            })
+            
+            # Log the data for debugging
+            print(f"Product {product.name}:")
+            print(f"  Original price (cost): ${product.price}")
+            print(f"  Avg selling price: ${avg_selling_price}")
+            print(f"  Units sold: {total_units}")
+            if sales:
+                print("  Sale prices:", [f"${sale.price_at_sale} (qty: {sale.quantity})" for sale in sales])
+            print("---")
         
-        if not all(col in df.columns for col in required_columns):
-            return templates.TemplateResponse(
-                "profit.html",
-                {
-                    "request": request,
-                    "error": f"Missing required columns. Your file needs: {', '.join(required_columns)}"
-                }
-            )
+        # Convert to DataFrame for analysis
+        df = pd.DataFrame(data)
         
         roadmap, summary_stats = analyze_profit(df)
         return templates.TemplateResponse(
@@ -171,7 +191,8 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
         )
     
     except Exception as e:
+        print(f"Error in profit analysis: {str(e)}")  # Debug log
         return templates.TemplateResponse(
             "profit.html",
-            {"request": request, "error": f"Error processing file: {str(e)}"}
+            {"request": request, "error": f"Error processing data: {str(e)}"}
         )

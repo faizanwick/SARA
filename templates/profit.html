@@ -6,31 +6,84 @@
     <title>Profit Optimization Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .action-section {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            padding: 1rem;
+        }
+
+        .analyze-button {
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .analyze-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, #4338ca 0%, #312e81 100%);
+        }
+
+        .analyze-button:active {
+            transform: translateY(0);
+        }
+
+        .analyze-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .analyze-button i {
+            font-size: 1.2rem;
+        }
+
+        /* Loading animation */
+        .loading-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1><i class="fas fa-chart-line"></i> Profit Optimization Dashboard</h1>
-            <p>Upload your sales data to get actionable profit improvement strategies</p>
+            <p>Analyze your sales data to get actionable profit improvement strategies</p>
         </header>
 
-        <div class="upload-section">
-            <form method="POST" enctype="multipart/form-data">
-                <div class="file-upload">
-                    <label for="file-input">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <span id="file-label">Choose CSV File</span>
-                    </label>
-                    <input id="file-input" type="file" name="file" accept=".csv" required>
-                    <button type="submit">Analyze Data</button>
-                </div>
-            </form>
-            {% if error %}
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i> {{ error }}
-                </div>
-            {% endif %}
+        <div class="action-section">
+            <button id="analyzeBtn" class="analyze-button">
+                <i class="fas fa-chart-bar"></i>
+                <span>Generate Profit Analysis</span>
+            </button>
         </div>
+
+        {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i> {{ error }}
+            </div>
+        {% endif %}
 
         {% if summary_stats %}
         <section class="summary-section">
@@ -165,6 +218,43 @@
     </div>
 
     <script>
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            // Show loading state
+            this.disabled = true;
+            const originalContent = this.innerHTML;
+            this.innerHTML = `
+                <i class="fas fa-spinner loading-spin"></i>
+                <span>Analyzing Data...</span>
+            `;
+
+            // Call the API endpoint
+            fetch('/profit', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
+            .then(html => {
+                // Replace the entire page content with the new HTML
+                document.documentElement.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.disabled = false;
+                this.innerHTML = originalContent;
+                
+                // Show error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    Failed to analyze data: ${error.message}
+                `;
+                document.querySelector('.action-section').after(errorDiv);
+            });
+        });
+
         // Filter functionality
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -180,12 +270,6 @@
                     }
                 });
             });
-        });
-
-        // File input label update
-        document.getElementById('file-input').addEventListener('change', function() {
-            const fileName = this.files[0] ? this.files[0].name : 'Choose CSV File';
-            document.getElementById('file-label').textContent = fileName;
         });
     </script>
 </body>
