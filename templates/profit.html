@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Optimization Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i> Profit Optimization Dashboard</h1>
+            <p>Upload your sales data to get actionable profit improvement strategies</p>
+        </header>
+
+        <div class="upload-section">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="file-upload">
+                    <label for="file-input">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span id="file-label">Choose CSV File</span>
+                    </label>
+                    <input id="file-input" type="file" name="file" accept=".csv" required>
+                    <button type="submit">Analyze Data</button>
+                </div>
+            </form>
+            {% if error %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if summary_stats %}
+        <section class="summary-section">
+            <h2><i class="fas fa-chart-pie"></i> Profit Summary</h2>
+            
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Total Products</h3>
+                    <p>{{ summary_stats.total_products }}</p>
+                </div>
+                <div class="card">
+                    <h3>Total Profit</h3>
+                    <p>${{ "%.2f"|format(summary_stats.total_profit) }}</p>
+                </div>
+                <div class="card">
+                    <h3>Avg. Margin</h3>
+                    <p>{{ "%.1f"|format(summary_stats.avg_margin) }}%</p>
+                </div>
+            </div>
+
+            <div class="detailed-summary">
+                <h3><i class="fas fa-lightbulb"></i> Action Plan</h3>
+                <div class="steps">
+                    <div class="step">
+                        <span>1</span>
+                        <p><strong>Focus on your top 5 products</strong> that generate most of your profit</p>
+                    </div>
+                    <div class="step">
+                        <span>2</span>
+                        <p><strong>Review underperforming products</strong> and implement recommended strategies</p>
+                    </div>
+                    <div class="step">
+                        <span>3</span>
+                        <p><strong>Monitor changes</strong> and adjust your approach monthly</p>
+                    </div>
+                </div>
+
+                <div class="product-tables">
+                    <div class="table-container">
+                        <h4><i class="fas fa-trophy"></i> Top Performing Products</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Category</th>
+                                    <th>Total Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in summary_stats.top_products %}
+                                <tr>
+                                    <td>{{ product.product_id }}</td>
+                                    <td>{{ product.category }}</td>
+                                    <td>${{ "%.2f"|format(product.total_profit) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-container">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Products Needing Attention</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Category</th>
+                                    <th>Total Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in summary_stats.worst_products %}
+                                <tr>
+                                    <td>{{ product.product_id }}</td>
+                                    <td>{{ product.category }}</td>
+                                    <td>${{ "%.2f"|format(product.total_profit) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if roadmap %}
+        <section class="strategies-section">
+            <h2><i class="fas fa-map-signs"></i> Product Strategies</h2>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="keep">High Profit</button>
+                <button class="filter-btn" data-filter="increase">Price Adjust</button>
+                <button class="filter-btn" data-filter="promote">Promote</button>
+                <button class="filter-btn" data-filter="clear">Clear Stock</button>
+            </div>
+
+            <div class="strategy-list">
+                {% for product in roadmap %}
+                <div class="strategy-card" data-type="{{ product.type }}">
+                    <div class="strategy-header">
+                        <h3>{{ product.product_id }} <span class="category">{{ product.category }}</span></h3>
+                        <span class="tag {{ product.type }}">{{ product.type|upper }}</span>
+                    </div>
+                    <div class="strategy-metrics">
+                        <div>
+                            <span>Unit Profit</span>
+                            <strong>{{ product.profit_per_unit }}</strong>
+                        </div>
+                        <div>
+                            <span>Units Sold</span>
+                            <strong>{{ product.units_sold }}</strong>
+                        </div>
+                        <div>
+                            <span>Total Profit</span>
+                            <strong>{{ product.total_profit }}</strong>
+                        </div>
+                        <div>
+                            <span>Margin</span>
+                            <strong>{{ product.profit_margin }}</strong>
+                        </div>
+                    </div>
+                    <div class="strategy-content">
+                        <p>{{ product.strategy }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+
+    <script>
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.strategy-card').forEach(card => {
+                    if (filter === 'all' || card.dataset.type === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // File input label update
+        document.getElementById('file-input').addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : 'Choose CSV File';
+            document.getElementById('file-label').textContent = fileName;
+        });
+    </script>
+</body>
+</html>
