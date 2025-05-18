@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SARA - Smart Analytics & Retailers Advantage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #4f46e5;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .active-nav::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg class="h-8 w-8 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span class="ml-2 text-xl font-bold text-gray-800">SARA</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#home" class="nav-link active-nav text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Home</a>
+                    <a href="#features" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Features</a>
+                    <a href="#about" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">About</a>
+                </div>
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-500 hover:text-indigo-600 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 bg-indigo-50">Home</a>
+                <a href="#features" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">Features</a>
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-24 pb-12 md:pt-32 md:pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 md:pr-10">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+                        Smart Analytics & <span class="text-indigo-600">Retailers Advantage</span>
+                    </h1>
+                    <p class="mt-4 text-xl text-gray-600">
+                        Transform your retail business with AI-powered analytics and strategic insights.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+                        <a href="#features" class="gradient-bg text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition duration-300 text-center">
+                            Explore Features
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 mt-10 md:mt-0">
+                    <svg class="w-full h-auto" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect x="50" y="50" rx="20" ry="20" width="400" height="300" fill="#f3f4f6" />
+                        <rect x="80" y="80" rx="10" ry="10" width="150" height="100" fill="url(#grad1)" opacity="0.8" />
+                        <rect x="250" y="80" rx="10" ry="10" width="150" height="100" fill="#e0e7ff" />
+                        <rect x="80" y="200" rx="10" ry="10" width="320" height="120" fill="#e0e7ff" />
+                        <circle cx="155" cy="130" r="30" fill="#ffffff" />
+                        <path d="M140,130 L155,145 L170,115" stroke="#4f46e5" stroke-width="5" fill="none" />
+                        <rect x="260" y="100" width="130" height="10" rx="5" fill="#4f46e5" opacity="0.7" />
+                        <rect x="260" y="120" width="100" height="10" rx="5" fill="#4f46e5" opacity="0.5" />
+                        <rect x="260" y="140" width="80" height="10" rx="5" fill="#4f46e5" opacity="0.3" />
+                        <rect x="100" y="220" width="280" height="10" rx="5" fill="#4f46e5" opacity="0.7" />
+                        <rect x="100" y="240" width="240" height="10" rx="5" fill="#4f46e5" opacity="0.5" />
+                        <rect x="100" y="260" width="200" height="10" rx="5" fill="#4f46e5" opacity="0.3" />
+                        <rect x="100" y="280" width="160" height="10" rx="5" fill="#4f46e5" opacity="0.2" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-800">Core Features</h2>
+                <p class="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+                    Discover how SARA can revolutionize your retail business with these powerful tools.
+                </p>
+            </div>
+
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div id="feature-1" class="feature-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mx-auto">
+                            <svg class="feature-icon h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800 text-center">Dashboard & Inventory Management</h3>
+                        <p class="mt-2 text-gray-600 text-center">
+                            Real-time analytics and comprehensive inventory control in one unified interface.
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 bg-indigo-50">
+                        <div class="flex justify-center">
+                            <a href="/dashboard" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition duration-300 inline-block">
+                                Explore Dashboard →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div id="feature-2" class="feature-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mx-auto">
+                            <svg class="feature-icon h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800 text-center">Profit Maximization Roadmap</h3>
+                        <p class="mt-2 text-gray-600 text-center">
+                            Strategic planning tools to optimize pricing, inventory, and operations for maximum profitability.
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 bg-indigo-50">
+                        <div class="flex justify-center">
+                            <a href="/profit" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition duration-300 inline-block">
+                                View Roadmap →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div id="feature-3" class="feature-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mx-auto">
+                            <svg class="feature-icon h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800 text-center">Market Trends Predictor</h3>
+                        <p class="mt-2 text-gray-600 text-center">
+                            AI-powered market analysis and trend predictions to stay ahead of the competition.
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 bg-indigo-50">
+                        <div class="flex justify-center">
+                            <a href="/predictor" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition duration-300 inline-block">
+                                Access Predictor →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div id="feature-4" class="feature-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mx-auto">
+                            <svg class="feature-icon h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800 text-center">AI Negotiator</h3>
+                        <p class="mt-2 text-gray-600 text-center">
+                            Smart negotiation assistant to help optimize deals and supplier relationships.
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 bg-indigo-50">
+                        <div class="flex justify-center">
+                            <a href="/login" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition duration-300 inline-block">
+                                Start Negotiating →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div id="feature-5" class="feature-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mx-auto">
+                            <svg class="feature-icon h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800 text-center">Marketing Strategies</h3>
+                        <p class="mt-2 text-gray-600 text-center">
+                            Data-driven marketing recommendations and campaign optimization tools.
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 bg-indigo-50">
+                        <div class="flex justify-center">
+                            <a href="/market" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition duration-300 inline-block">
+                                View Strategies →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 md:pr-10">
+                    <h2 class="text-3xl font-bold text-gray-800">About SARA</h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        SARA (Smart Analytics & Retailers Advantage) is a comprehensive retail management platform designed to empower businesses with data-driven insights and AI-powered tools.
+                    </p>
+                    <p class="mt-4 text-lg text-gray-600">
+                        Our mission is to help retailers of all sizes maximize profitability, streamline operations, and stay ahead of market trends through intelligent analytics and strategic recommendations.
+                    </p>
+                    <div class="mt-8 grid grid-cols-2 gap-4">
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-indigo-600">98%</div>
+                            <div class="text-gray-700">Accuracy in predictions</div>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-indigo-600">30%</div>
+                            <div class="text-gray-700">Average profit increase</div>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-indigo-600">5000+</div>
+                            <div class="text-gray-700">Retailers using SARA</div>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-indigo-600">24/7</div>
+                            <div class="text-gray-700">Support available</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2 mt-10 md:mt-0">
+                    <svg class="w-full h-auto" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.8" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="250" cy="200" r="150" fill="url(#grad2)" opacity="0.1" />
+                        <circle cx="250" cy="200" r="120" fill="url(#grad2)" opacity="0.2" />
+                        <circle cx="250" cy="200" r="90" fill="url(#grad2)" opacity="0.3" />
+                        <circle cx="250" cy="200" r="60" fill="url(#grad2)" opacity="0.4" />
+                        <circle cx="250" cy="200" r="30" fill="url(#grad2)" opacity="0.5" />
+                        
+                        <!-- Data points -->
+                        <circle cx="320" cy="150" r="8" fill="#4f46e5" />
+                        <circle cx="180" cy="220" r="8" fill="#4f46e5" />
+                        <circle cx="250" cy="100" r="8" fill="#4f46e5" />
+                        <circle cx="300" cy="280" r="8" fill="#4f46e5" />
+                        <circle cx="150" cy="170" r="8" fill="#4f46e5" />
+                        
+                        <!-- Connecting lines -->
+                        <line x1="250" y1="200" x2="320" y2="150" stroke="#4f46e5" stroke-width="2" />
+                        <line x1="250" y1="200" x2="180" y2="220" stroke="#4f46e5" stroke-width="2" />
+                        <line x1="250" y1="200" x2="250" y2="100" stroke="#4f46e5" stroke-width="2" />
+                        <line x1="250" y1="200" x2="300" y2="280" stroke="#4f46e5" stroke-width="2" />
+                        <line x1="250" y1="200" x2="150" y2="170" stroke="#4f46e5" stroke-width="2" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center">
+                        <svg class="h-8 w-8 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span class="ml-2 text-xl font-bold">SARA</span>
+                    </div>
+                    <p class="mt-2 text-gray-400">
+                        Smart Analytics & Retailers Advantage
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Features</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a href="#feature-1" class="text-gray-400 hover:text-white">Dashboard</a></li>
+                            <li><a href="#feature-2" class="text-gray-400 hover:text-white">Profit Maximization</a></li>
+                            <li><a href="#feature-3" class="text-gray-400 hover:text-white">Market Trends</a></li>
+                            <li><a href="#feature-4" class="text-gray-400 hover:text-white">AI Negotiator</a></li>
+                            <li><a href="#feature-5" class="text-gray-400 hover:text-white">Marketing Strategies</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Company</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a href="#about" class="text-gray-400 hover:text-white">About</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Blog</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Press</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Legal</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white">Privacy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Terms</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-400">
+                    &copy; 2023 SARA. All rights reserved.
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Facebook</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">LinkedIn</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 64, // Adjust for fixed header
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // Active nav link highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active-nav');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active-nav');
+                }
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'941a40e4a2973a14',t:'MTc0NzU1OTc2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
