@@ -54,3 +54,11 @@ def read_index(request: Request):
 
 # Include prediction routes
 app.include_router(prediction_router, prefix="/api")
+
+@app.get("/market", response_class=HTMLResponse)
+def read_index(request: Request):
+    return templates.TemplateResponse("market.html", {"request": request})
+
+@app.get("/marketing-strategies")
+def marketing_strategies(request: Request):
+    return templates.TemplateResponse("marketing-strategies.html", {"request": request})

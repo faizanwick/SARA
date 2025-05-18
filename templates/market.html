@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Toolkit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+        }
+
+        .tab-active {
+            background-color: #4f46e5 !important;
+            color: white !important;
+        }
+
+        .preview-container {
+            transition: all 0.3s ease;
+        }
+
+        .social-post {
+            width: 500px;
+            height: 500px;
+            background-size: cover;
+            position: relative;
+        }
+
+        .offer-pamphlet {
+            width: 600px;
+            height: 400px;
+            position: relative;
+        }
+
+        .widget-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .widget-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 150px;
+            margin-top: 10px;
+        }
+
+        .post-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 15px auto;
+            display: block;
+        }
+
+        #download-status {
+            display: none;
+            margin-top: 10px;
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .scheduler-container {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .countdown-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .time-unit {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification {
+            animation: slideIn 0.5s ease-out forwards, fadeOut 0.5s ease-in 4.5s forwards;
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        .widget-container {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            width: 100%;
+            max-width: 24rem; /* Same as max-w-md */
+        }
+        .explore-btn {
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .explore-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .content-area {
+            min-height: 12rem; /* Ensures some vertical space similar to the countdown area */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6">
+            <div class="container mx-auto px-4">
+                <h1 class="text-3xl font-bold text-center">Marketing Toolkit</h1>
+                <p class="text-center mt-2">Create professional marketing materials in minutes</p>
+            </div>
+        </header>
+
+        <!-- Widget Cards -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <!-- Email & SMS Widget -->
+                <div class="widget-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-700 h-3"></div>
+                    <div class="p-6">
+                        <div
+                            class="flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-500 rounded-full mb-4 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-center mb-2">Email & SMS Campaign</h3>
+                        <p class="text-gray-600 text-center mb-6">Create professional email and SMS templates for your
+                            marketing campaigns</p>
+                        <button
+                            class="create-btn w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+                            data-target="email">Create Campaign</button>
+                    </div>
+                </div>
+
+                <!-- Social Media Widget -->
+                <div class="widget-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-700 h-3"></div>
+                    <div class="p-6">
+                        <div
+                            class="flex items-center justify-center w-16 h-16 bg-purple-100 text-purple-500 rounded-full mb-4 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-center mb-2">Social Media Post</h3>
+                        <p class="text-gray-600 text-center mb-6">Design eye-catching social media posts for any
+                            platform</p>
+                        <button
+                            class="create-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+                            data-target="social">Create Post</button>
+                    </div>
+                </div>
+
+                <!-- Limited Time Offer Widget -->
+                <div class="widget-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-500 to-green-700 h-3"></div>
+                    <div class="p-6">
+                        <div
+                            class="flex items-center justify-center w-16 h-16 bg-green-100 text-green-500 rounded-full mb-4 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-center mb-2">Limited Time Offer</h3>
+                        <p class="text-gray-600 text-center mb-6">Create promotional pamphlets for your special offers
+                            and discounts</p>
+                        <button
+                            class="create-btn w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+                            data-target="offer">Create Offer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scheduler and Recommendations Container -->
+            <div class="flex flex-col md:flex-row justify-center md:space-x-6 mb-12">
+                <!-- Post Scheduler -->
+                <div class="scheduler-container w-full max-w-md rounded-2xl p-6 text-white mb-6 md:mb-0">
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-2xl font-bold">Post Scheduler</h1>
+                        <div class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-medium">
+                            Daily at 2:00 PM
+                        </div>
+                    </div>
+
+                    <div class="countdown-container rounded-xl p-5 mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold">Next Post In</h2>
+                            <div id="status-indicator"
+                                class="px-3 py-1 rounded-full text-xs font-medium bg-green-400 text-green-900">Active</div>
+                        </div>
+
+                        <div id="countdown-display" class="flex justify-between text-center">
+                            <div class="time-unit rounded-lg p-3 w-1/4 mx-1">
+                                <div id="hours" class="text-2xl font-bold">00</div>
+                                <div class="text-xs opacity-80">Hours</div>
+                            </div>
+                            <div class="time-unit rounded-lg p-3 w-1/4 mx-1">
+                                <div id="minutes" class="text-2xl font-bold">00</div>
+                                <div class="text-xs opacity-80">Minutes</div>
+                            </div>
+                            <div class="time-unit rounded-lg p-3 w-1/4 mx-1">
+                                <div id="seconds" class="text-2xl font-bold">00</div>
+                                <div class="text-xs opacity-80">Seconds</div>
+                            </div>
+                        </div>
+                    </div>
+
+                                        <div class="flex justify-between items-center">                    </div>
+                </div>
+
+                <!-- Further Recommendations Widget -->
+                <div class="widget-container w-full max-w-md rounded-2xl p-6 text-white">
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-2xl font-bold">Further Recommendations</h1>
+                    </div>
+                    
+                                        <div class="content-area bg-white bg-opacity-15 backdrop-filter backdrop-blur-sm rounded-xl p-5 mb-6 flex flex-col items-center justify-center">                        <a href="/marketing-strategies" target="_blank" id="explore-btn" class="explore-btn text-indigo-600 font-semibold py-3 px-8 rounded-full text-lg hover:bg-gray-50">                            Explore More                        </a>                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm opacity-80">Discover new content</div>
+                        <div class="text-sm opacity-80">Updated daily</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="notification"
+                class="notification fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 z-50 hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span>Time to post on social media!</span>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex flex-wrap mb-8 border-b border-gray-200">
+                <button id="tab-email"
+                    class="tab-btn px-6 py-3 text-lg font-medium rounded-t-lg text-gray-700 hover:bg-gray-100">Email &
+                    SMS Campaign</button>
+                <button id="tab-social"
+                    class="tab-btn px-6 py-3 text-lg font-medium rounded-t-lg text-gray-700 hover:bg-gray-100">Social
+                    Media Post</button>
+                <button id="tab-offer"
+                    class="tab-btn px-6 py-3 text-lg font-medium rounded-t-lg text-gray-700 hover:bg-gray-100">Limited
+                    Time Offer</button>
+            </div>
+
+            <!-- Email & SMS Campaign Section -->
+            <div id="section-email" class="tab-section hidden">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Email & SMS Campaign Builder</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <form id="email-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Campaign Name</label>
+                                    <input type="text" id="email-campaign-name"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="Summer Sale Announcement">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Subject Line</label>
+                                    <input type="text" id="email-subject"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="Don't Miss Our Biggest Sale of the Year!">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Target Audience</label>
+                                    <select id="email-audience"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="customers">Existing Customers</option>
+                                        <option value="leads">New Leads</option>
+                                        <option value="subscribers">Newsletter Subscribers</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Main Message</label>
+                                    <textarea id="email-message"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        rows="4" placeholder="Write your main message here..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Call to Action</label>
+                                    <input type="text" id="email-cta"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="Shop Now">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Campaign Type</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="campaign-type" value="email" checked
+                                                class="form-radio text-indigo-600">
+                                            <span class="ml-2">Email</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="campaign-type" value="sms"
+                                                class="form-radio text-indigo-600">
+                                            <span class="ml-2">SMS</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="button" id="generate-email-btn"
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300">Generate
+                                    Campaign</button>
+                            </form>
+                        </div>
+                        <div>
+                            <div class="bg-gray-100 p-6 rounded-lg h-full">
+                                <h3 class="text-xl font-semibold mb-4">Preview</h3>
+                                <div id="email-preview"
+                                    class="preview-container bg-white border rounded-lg p-6 min-h-[300px]">
+                                    <p class="text-gray-500 text-center">Fill out the form and click "Generate Campaign"
+                                        to see your preview</p>
+                                </div>
+                                <div class="mt-4 hidden" id="email-actions">
+                                    <button id="copy-email-btn"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 mr-2">
+                                        Copy Text
+                                    </button>
+                                    <div id="copy-success" class="hidden text-green-600 mt-2">Copied to clipboard!</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media Post Section -->
+            <div id="section-social" class="tab-section hidden">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Social Media Post Creator</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <form id="social-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Post Title</label>
+                                    <input type="text" id="social-title"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="New Product Launch">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Platform</label>
+                                    <select id="social-platform"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="instagram">Instagram</option>
+                                        <option value="facebook">Facebook</option>
+                                        <option value="twitter">Twitter</option>
+                                        <option value="linkedin">LinkedIn</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Post Message</label>
+                                    <textarea id="social-message"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        rows="4" placeholder="Write your post content here..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Hashtags</label>
+                                    <input type="text" id="social-hashtags"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="#newproduct #launch #excited">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Background Style</label>
+                                    <select id="social-bg-style"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="gradient">Gradient</option>
+                                        <option value="solid">Solid Color</option>
+                                        <option value="pattern">Pattern</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Color Theme</label>
+                                    <div class="grid grid-cols-5 gap-2">
+                                        <div class="w-8 h-8 rounded-full bg-blue-500 cursor-pointer color-option"
+                                            data-color="blue"></div>
+                                        <div class="w-8 h-8 rounded-full bg-purple-500 cursor-pointer color-option"
+                                            data-color="purple"></div>
+                                        <div class="w-8 h-8 rounded-full bg-pink-500 cursor-pointer color-option"
+                                            data-color="pink"></div>
+                                        <div class="w-8 h-8 rounded-full bg-green-500 cursor-pointer color-option"
+                                            data-color="green"></div>
+                                        <div class="w-8 h-8 rounded-full bg-orange-500 cursor-pointer color-option"
+                                            data-color="orange"></div>
+                                    </div>
+                                    <input type="hidden" id="social-color" value="blue">
+                                </div>
+                                <!-- Image Upload Feature -->
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Add Image</label>
+                                    <div class="flex items-center">
+                                        <input type="file" id="social-image" accept="image/*" class="hidden">
+                                        <button type="button" id="image-upload-btn"
+                                            class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+                                            Upload Image
+                                        </button>
+                                        <span id="file-name" class="ml-3 text-sm text-gray-500">No file selected</span>
+                                    </div>
+                                    <div id="image-preview-container" class="hidden mt-3">
+                                        <img id="image-preview" class="image-preview rounded-lg border border-gray-300">
+                                        <button type="button" id="remove-image-btn"
+                                            class="mt-2 text-red-600 hover:text-red-800 text-sm">
+                                            Remove Image
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" id="generate-social-btn"
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300">Generate
+                                    Social Post</button>
+                            </form>
+                        </div>
+                        <div>
+                            <div class="bg-gray-100 p-6 rounded-lg h-full">
+                                <h3 class="text-xl font-semibold mb-4">Preview</h3>
+                                <div class="flex justify-center">
+                                    <div id="social-preview"
+                                        class="preview-container social-post bg-white border rounded-lg flex items-center justify-center">
+                                        <p class="text-gray-500 text-center p-4">Fill out the form and click "Generate
+                                            Social Post" to see your preview</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 hidden" id="social-actions">
+                                    <button id="download-social-btn"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+                                        Download Post Image
+                                    </button>
+                                    <div id="download-status" class="text-green-600 mt-2">Processing download...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Limited Time Offer Section -->
+            <div id="section-offer" class="tab-section hidden">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Limited Time Offer Creator</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <form id="offer-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Offer Title</label>
+                                    <input type="text" id="offer-title"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="Flash Sale - 50% Off">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Discount Type</label>
+                                    <select id="offer-discount-type"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="percentage">Percentage Off</option>
+                                        <option value="fixed">Fixed Amount Off</option>
+                                        <option value="bogo">Buy One Get One</option>
+                                        <option value="free">Free Gift</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Discount Value</label>
+                                    <input type="text" id="offer-discount-value"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="50% or $25">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Valid Until</label>
+                                    <input type="date" id="offer-expiry"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Offer Description</label>
+                                    <textarea id="offer-description"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        rows="3" placeholder="Describe your offer details..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Promo Code</label>
+                                    <input type="text" id="offer-code"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="SUMMER50">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Design Style</label>
+                                    <select id="offer-style"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="modern">Modern</option>
+                                        <option value="elegant">Elegant</option>
+                                        <option value="bold">Bold</option>
+                                        <option value="playful">Playful</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="generate-offer-btn"
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300">Generate
+                                    Offer Pamphlet</button>
+                            </form>
+                        </div>
+                        <div>
+                            <div class="bg-gray-100 p-6 rounded-lg h-full">
+                                <h3 class="text-xl font-semibold mb-4">Preview</h3>
+                                <div class="flex justify-center">
+                                    <div id="offer-preview"
+                                        class="preview-container offer-pamphlet bg-white border rounded-lg flex items-center justify-center">
+                                        <p class="text-gray-500 text-center p-4">Fill out the form and click "Generate
+                                            Offer Pamphlet" to see your preview</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 hidden" id="offer-actions">
+                                    <button id="download-offer-btn"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+                                        Download Pamphlet
+                                    </button>
+                                    <div id="download-status-offer" class="text-green-600 mt-2" style="display: none;">
+                                        Processing download...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-6">
+            <div class="container mx-auto px-4 text-center">
+                
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const notification = document.getElementById('notification');
+            const hoursDisplay = document.getElementById('hours');
+            const minutesDisplay = document.getElementById('minutes');
+            const secondsDisplay = document.getElementById('seconds');
+
+            let countdownInterval;
+            let targetTime = null;
+            const notificationSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLHPO7tCSQBEpeM7uzpNREyZvt9nknGcfCxpTlbXMvJd0TDMTKj1FTVtocH2Lk5yjqrK6wsjQ1t7k6/P7AwoXIjA9Sk9XY3Z8hIeQnqy0ucDGzNTc5Oz08/8NHCs2PUVRXWl1gYuNlJ+ptLnAx83V3OPr8vj/Dhwp');
+
+            // Function to get target time (5 minutes from now)
+            function getTargetTime() {
+                const now = new Date();
+                return new Date(now.getTime() + 5 * 60000); // 5 minutes in milliseconds
+            }
+
+            // Initialize the timer
+            function initializeTimer() {
+                targetTime = getTargetTime();
+
+                // Clear any existing interval
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                }
+
+                // Start the countdown
+                updateCountdown();
+                countdownInterval = setInterval(updateCountdown, 1000);
+            }
+
+            // Update the countdown timer
+            function updateCountdown() {
+                if (!targetTime) return;
+
+                const now = new Date();
+                const timeDiff = targetTime - now;
+
+                if (timeDiff <= 0) {
+                    // Time's up!
+                    clearInterval(countdownInterval);
+                    hoursDisplay.textContent = '00';
+                    minutesDisplay.textContent = '00';
+                    secondsDisplay.textContent = '00';
+
+                    // Show notification
+                    notification.classList.remove('hidden');
+
+                    // Play sound
+                    notificationSound.play().catch(e => console.log('Audio playback failed:', e));
+
+                    // Schedule next timer
+                    setTimeout(() => {
+                        initializeTimer();
+                    }, 5000); // Wait 5 seconds before resetting
+
+                    return;
+                }
+
+                // Calculate hours, minutes, seconds
+                const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                // Update the display
+                hoursDisplay.textContent = hours.toString().padStart(2, '0');
+                minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+                secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+
+                // Add pulse animation when less than 1 minute remaining
+                if (timeDiff < 60 * 1000) {
+                    document.querySelectorAll('.time-unit').forEach(el => {
+                        el.classList.add('pulse');
+                    });
+                } else {
+                    document.querySelectorAll('.time-unit').forEach(el => {
+                        el.classList.remove('pulse');
+                    });
+                }
+            }
+
+            // Initialize timer
+            initializeTimer();
+
+            // Check if we need to show a notification on page load
+            const now = new Date();
+            if (targetTime && now >= targetTime) {
+                notification.classList.remove('hidden');
+            }
+
+            // Tab switching functionality
+            const tabs = ['email', 'social', 'offer'];
+            tabs.forEach(tab => {
+                document.getElementById(`tab-${tab}`).addEventListener('click', () => {
+                    // Hide all sections
+                    tabs.forEach(t => {
+                        document.getElementById(`section-${t}`).classList.add('hidden');
+                        document.getElementById(`tab-${t}`).classList.remove('tab-active');
+                    });
+
+                    // Show selected section
+                    document.getElementById(`section-${tab}`).classList.remove('hidden');
+                    document.getElementById(`tab-${tab}`).classList.add('tab-active');
+                });
+            });
+
+            // Widget card create buttons
+            document.querySelectorAll('.create-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = btn.getAttribute('data-target');
+
+                    // Hide all sections
+                    tabs.forEach(t => {
+                        document.getElementById(`section-${t}`).classList.add('hidden');
+                        document.getElementById(`tab-${t}`).classList.remove('tab-active');
+                    });
+
+                    // Show selected section
+                    document.getElementById(`section-${target}`).classList.remove('hidden');
+                    document.getElementById(`tab-${target}`).classList.add('tab-active');
+
+                    // Scroll to the section
+                    document.getElementById(`section-${target}`).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Color selection for social media post
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.color-option').forEach(opt => {
+                        opt.style.border = 'none';
+                    });
+                    option.style.border = '2px solid black';
+                    document.getElementById('social-color').value = option.dataset.color;
+                });
+            });
+
+            // Set default selected color
+            document.querySelector('.color-option[data-color="blue"]').style.border = '2px solid black';
+
+            // Store the uploaded image data
+            let uploadedImageData = null;
+
+            // Image upload functionality
+            document.getElementById('image-upload-btn').addEventListener('click', () => {
+                document.getElementById('social-image').click();
+            });
+
+            document.getElementById('social-image').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        uploadedImageData = event.target.result;
+                        document.getElementById('image-preview').src = uploadedImageData;
+                        document.getElementById('image-preview-container').classList.remove('hidden');
+                        document.getElementById('file-name').textContent = file.name;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('remove-image-btn').addEventListener('click', () => {
+                document.getElementById('social-image').value = '';
+                document.getElementById('image-preview-container').classList.add('hidden');
+                document.getElementById('file-name').textContent = 'No file selected';
+                uploadedImageData = null;
+            });
+
+            // Set the first tab as active by default
+            document.getElementById('tab-email').classList.add('tab-active');
+            document.getElementById('section-email').classList.remove('hidden');
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'94034b8293ffc1ac',t:'MTc0NzMxOTAyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
