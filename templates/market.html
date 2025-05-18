@@ -579,177 +579,228 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const notification = document.getElementById('notification');
-            const hoursDisplay = document.getElementById('hours');
-            const minutesDisplay = document.getElementById('minutes');
-            const secondsDisplay = document.getElementById('seconds');
+            console.log('DOM Content Loaded');
+            
+            // Debug click handlers
+            document.getElementById('generate-email-btn')?.addEventListener('click', function() {
+                console.log('Email generate button clicked');
+                generateEmailCampaign();
+            });
+            
+            document.getElementById('generate-social-btn')?.addEventListener('click', function() {
+                console.log('Social generate button clicked');
+                generateSocialPost();
+            });
+            
+            document.getElementById('generate-offer-btn')?.addEventListener('click', function() {
+                console.log('Offer generate button clicked');
+                generateOfferPamphlet();
+            });
 
-            let countdownInterval;
-            let targetTime = null;
-            const notificationSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLHPO7tCSQBEpeM7uzpNREyZvt9nknGcfCxpTlbXMvJd0TDMTKj1FTVtocH2Lk5yjqrK6wsjQ1t7k6/P7AwoXIjA9Sk9XY3Z8hIeQnqy0ucDGzNTc5Oz08/8NHCs2PUVRXWl1gYuNlJ+ptLnAx83V3OPr8vj/Dhwp');
+            // Get all tab buttons and sections
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabSections = document.querySelectorAll('.tab-section');
+            const createBtns = document.querySelectorAll('.create-btn');
 
-            // Function to get target time (5 minutes from now)
-            function getTargetTime() {
-                const now = new Date();
-                return new Date(now.getTime() + 5 * 60000); // 5 minutes in milliseconds
-            }
+            // Show first tab section by default
+            document.getElementById('section-email').classList.remove('hidden');
+            document.getElementById('tab-email').classList.add('tab-active');
 
-            // Initialize the timer
-            function initializeTimer() {
-                targetTime = getTargetTime();
+            // Handle tab switching
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabBtns.forEach(b => b.classList.remove('tab-active'));
+                    // Hide all sections
+                    tabSections.forEach(section => section.classList.add('hidden'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('tab-active');
+                    // Show corresponding section
+                    const sectionId = 'section-' + this.id.split('-')[1];
+                    document.getElementById(sectionId).classList.remove('hidden');
+                });
+            });
 
-                // Clear any existing interval
-                if (countdownInterval) {
-                    clearInterval(countdownInterval);
-                }
+            // Handle create button clicks
+            createBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    // Remove active class from all tabs
+                    tabBtns.forEach(b => b.classList.remove('tab-active'));
+                    // Hide all sections
+                    tabSections.forEach(section => section.classList.add('hidden'));
+                    
+                    // Show corresponding tab and section
+                    document.getElementById('tab-' + target).classList.add('tab-active');
+                    document.getElementById('section-' + target).classList.remove('hidden');
+                    
+                    // Scroll to the section
+                    document.getElementById('section-' + target).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
 
-                // Start the countdown
-                updateCountdown();
-                countdownInterval = setInterval(updateCountdown, 1000);
-            }
-
-            // Update the countdown timer
-            function updateCountdown() {
-                if (!targetTime) return;
-
-                const now = new Date();
-                const timeDiff = targetTime - now;
-
-                if (timeDiff <= 0) {
-                    // Time's up!
-                    clearInterval(countdownInterval);
-                    hoursDisplay.textContent = '00';
-                    minutesDisplay.textContent = '00';
-                    secondsDisplay.textContent = '00';
-
-                    // Show notification
-                    notification.classList.remove('hidden');
-
-                    // Play sound
-                    notificationSound.play().catch(e => console.log('Audio playback failed:', e));
-
-                    // Schedule next timer
-                    setTimeout(() => {
-                        initializeTimer();
-                    }, 5000); // Wait 5 seconds before resetting
-
-                    return;
-                }
-
-                // Calculate hours, minutes, seconds
-                const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
-                // Update the display
-                hoursDisplay.textContent = hours.toString().padStart(2, '0');
-                minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-                secondsDisplay.textContent = seconds.toString().padStart(2, '0');
-
-                // Add pulse animation when less than 1 minute remaining
-                if (timeDiff < 60 * 1000) {
-                    document.querySelectorAll('.time-unit').forEach(el => {
-                        el.classList.add('pulse');
-                    });
-                } else {
-                    document.querySelectorAll('.time-unit').forEach(el => {
-                        el.classList.remove('pulse');
-                    });
-                }
-            }
-
-            // Initialize timer
+            // Initialize the countdown timer
             initializeTimer();
 
-            // Check if we need to show a notification on page load
-            const now = new Date();
-            if (targetTime && now >= targetTime) {
-                notification.classList.remove('hidden');
-            }
+            // Image upload handling
+            const imageUploadBtn = document.getElementById('image-upload-btn');
+            const imageInput = document.getElementById('social-image');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            const removeImageBtn = document.getElementById('remove-image-btn');
+            const fileName = document.getElementById('file-name');
 
-            // Tab switching functionality
-            const tabs = ['email', 'social', 'offer'];
-            tabs.forEach(tab => {
-                document.getElementById(`tab-${tab}`).addEventListener('click', () => {
-                    // Hide all sections
-                    tabs.forEach(t => {
-                        document.getElementById(`section-${t}`).classList.add('hidden');
-                        document.getElementById(`tab-${t}`).classList.remove('tab-active');
-                    });
+            imageUploadBtn.addEventListener('click', () => imageInput.click());
 
-                    // Show selected section
-                    document.getElementById(`section-${tab}`).classList.remove('hidden');
-                    document.getElementById(`tab-${tab}`).classList.add('tab-active');
-                });
-            });
-
-            // Widget card create buttons
-            document.querySelectorAll('.create-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const target = btn.getAttribute('data-target');
-
-                    // Hide all sections
-                    tabs.forEach(t => {
-                        document.getElementById(`section-${t}`).classList.add('hidden');
-                        document.getElementById(`tab-${t}`).classList.remove('tab-active');
-                    });
-
-                    // Show selected section
-                    document.getElementById(`section-${target}`).classList.remove('hidden');
-                    document.getElementById(`tab-${target}`).classList.add('tab-active');
-
-                    // Scroll to the section
-                    document.getElementById(`section-${target}`).scrollIntoView({ behavior: 'smooth' });
-                });
-            });
-
-            // Color selection for social media post
-            document.querySelectorAll('.color-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    document.querySelectorAll('.color-option').forEach(opt => {
-                        opt.style.border = 'none';
-                    });
-                    option.style.border = '2px solid black';
-                    document.getElementById('social-color').value = option.dataset.color;
-                });
-            });
-
-            // Set default selected color
-            document.querySelector('.color-option[data-color="blue"]').style.border = '2px solid black';
-
-            // Store the uploaded image data
-            let uploadedImageData = null;
-
-            // Image upload functionality
-            document.getElementById('image-upload-btn').addEventListener('click', () => {
-                document.getElementById('social-image').click();
-            });
-
-            document.getElementById('social-image').addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file) {
+            imageInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    fileName.textContent = file.name;
                     const reader = new FileReader();
-                    reader.onload = function (event) {
-                        uploadedImageData = event.target.result;
-                        document.getElementById('image-preview').src = uploadedImageData;
-                        document.getElementById('image-preview-container').classList.remove('hidden');
-                        document.getElementById('file-name').textContent = file.name;
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreviewContainer.classList.remove('hidden');
                     };
                     reader.readAsDataURL(file);
                 }
             });
 
-            document.getElementById('remove-image-btn').addEventListener('click', () => {
-                document.getElementById('social-image').value = '';
-                document.getElementById('image-preview-container').classList.add('hidden');
-                document.getElementById('file-name').textContent = 'No file selected';
-                uploadedImageData = null;
+            removeImageBtn.addEventListener('click', function() {
+                imageInput.value = '';
+                fileName.textContent = 'No file selected';
+                imagePreviewContainer.classList.add('hidden');
             });
 
-            // Set the first tab as active by default
-            document.getElementById('tab-email').classList.add('tab-active');
-            document.getElementById('section-email').classList.remove('hidden');
+            // Color theme selection
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.getElementById('social-color').value = this.getAttribute('data-color');
+                    document.querySelectorAll('.color-option').forEach(opt => 
+                        opt.style.border = opt === this ? '2px solid #4F46E5' : 'none'
+                    );
+                });
+            });
         });
+
+        function generateEmailCampaign() {
+            const preview = document.getElementById('email-preview');
+            const actions = document.getElementById('email-actions');
+            const campaignName = document.getElementById('email-campaign-name').value || 'Campaign Name';
+            const subject = document.getElementById('email-subject').value || 'Subject Line';
+            const message = document.getElementById('email-message').value || 'Your message here';
+            const cta = document.getElementById('email-cta').value || 'Click Here';
+            const audience = document.getElementById('email-audience').value;
+
+            preview.innerHTML = `
+                <div class="space-y-4 w-full">
+                    <div class="border-b pb-2">
+                        <div class="text-gray-500 text-sm">To: ${audience}</div>
+                        <div class="font-bold text-xl text-gray-800">${subject}</div>
+                    </div>
+                    <div class="py-4">
+                        <div class="text-gray-700 whitespace-pre-wrap">${message}</div>
+                    </div>
+                    <div class="pt-4">
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition duration-300">${cta}</button>
+                    </div>
+                </div>
+            `;
+            actions.classList.remove('hidden');
+        }
+
+        function generateSocialPost() {
+            const preview = document.getElementById('social-preview');
+            const actions = document.getElementById('social-actions');
+            const title = document.getElementById('social-title').value || 'Post Title';
+            const message = document.getElementById('social-message').value || 'Your message here';
+            const hashtags = document.getElementById('social-hashtags').value || '#YourHashtags';
+            const color = document.getElementById('social-color').value;
+            const platform = document.getElementById('social-platform').value;
+            const bgStyle = document.getElementById('social-bg-style').value;
+            
+            let backgroundStyle;
+            switch(color) {
+                case 'blue':
+                    backgroundStyle = bgStyle === 'gradient' ? 'background: linear-gradient(135deg, #3B82F6, #1D4ED8)' : 'background-color: #3B82F6';
+                    break;
+                case 'purple':
+                    backgroundStyle = bgStyle === 'gradient' ? 'background: linear-gradient(135deg, #8B5CF6, #6D28D9)' : 'background-color: #8B5CF6';
+                    break;
+                case 'pink':
+                    backgroundStyle = bgStyle === 'gradient' ? 'background: linear-gradient(135deg, #EC4899, #BE185D)' : 'background-color: #EC4899';
+                    break;
+                case 'green':
+                    backgroundStyle = bgStyle === 'gradient' ? 'background: linear-gradient(135deg, #10B981, #059669)' : 'background-color: #10B981';
+                    break;
+                case 'orange':
+                    backgroundStyle = bgStyle === 'gradient' ? 'background: linear-gradient(135deg, #F97316, #C2410C)' : 'background-color: #F97316';
+                    break;
+                default:
+                    backgroundStyle = bgStyle === 'gradient' ? 'background: linear-gradient(135deg, #3B82F6, #1D4ED8)' : 'background-color: #3B82F6';
+            }
+
+            preview.setAttribute('style', backgroundStyle);
+            preview.innerHTML = `
+                <div class="text-white p-8 space-y-6 w-full h-full flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="font-bold text-3xl">${title}</div>
+                        <div class="text-xl leading-relaxed whitespace-pre-wrap">${message}</div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="text-lg opacity-90">${hashtags}</div>
+                        <div class="text-sm opacity-75">Posted on ${platform}</div>
+                    </div>
+                </div>
+            `;
+            actions.classList.remove('hidden');
+        }
+
+        function generateOfferPamphlet() {
+            const preview = document.getElementById('offer-preview');
+            const actions = document.getElementById('offer-actions');
+            const title = document.getElementById('offer-title').value || 'Special Offer';
+            const discountType = document.getElementById('offer-discount-type').value;
+            const discountValue = document.getElementById('offer-discount-value').value || '0';
+            const expiry = document.getElementById('offer-expiry').value || 'Limited Time';
+            const description = document.getElementById('offer-description').value || 'Offer description';
+            const code = document.getElementById('offer-code').value || 'CODE';
+            const style = document.getElementById('offer-style').value;
+
+            let styleClasses;
+            switch(style) {
+                case 'modern':
+                    styleClasses = 'bg-gradient-to-r from-indigo-500 to-purple-500';
+                    break;
+                case 'elegant':
+                    styleClasses = 'bg-gradient-to-r from-gray-800 to-gray-900';
+                    break;
+                case 'bold':
+                    styleClasses = 'bg-gradient-to-r from-red-500 to-pink-500';
+                    break;
+                case 'playful':
+                    styleClasses = 'bg-gradient-to-r from-yellow-400 to-orange-500';
+                    break;
+                default:
+                    styleClasses = 'bg-gradient-to-r from-indigo-500 to-purple-500';
+            }
+
+            preview.innerHTML = `
+                <div class="${styleClasses} w-full h-full rounded-lg p-8 text-white">
+                    <div class="space-y-6 text-center">
+                        <div class="font-bold text-4xl">${title}</div>
+                        <div class="text-3xl font-bold">${discountValue} ${discountType}</div>
+                        <div class="text-xl">${description}</div>
+                        <div class="bg-white/20 backdrop-blur-sm p-6 rounded-lg inline-block mx-auto">
+                            <div class="text-sm opacity-90">Use Code</div>
+                            <div class="text-2xl font-bold tracking-wider">${code}</div>
+                        </div>
+                        <div class="text-sm opacity-90">Valid until ${expiry}</div>
+                    </div>
+                </div>
+            `;
+            actions.classList.remove('hidden');
+        }
     </script>
     <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'94034b8293ffc1ac',t:'MTc0NzMxOTAyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
