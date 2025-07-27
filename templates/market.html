@@ -686,96 +686,69 @@
             });
 
             // Add download button event listeners for all three tabs
-            // Social Post Download
-            document.getElementById('download-social-btn')?.addEventListener('click', function () {
+            document.getElementById('download-social-btn')?.addEventListener('click', function() {
                 const preview = document.getElementById('social-preview');
                 const status = document.getElementById('download-status');
-
-                if (!preview) return alert('Preview not found!');
-                if (status) {
-                    status.style.display = 'block';
-                    status.textContent = 'Processing download...';
-                }
-
+                if (!preview) { alert('Preview not found!'); return; }
+                if (status) { status.style.display = 'block'; status.textContent = 'Processing download...'; }
                 if (typeof html2canvas !== 'function') {
                     if (status) status.textContent = 'Download failed: html2canvas not loaded.';
-                    return alert('Download failed: html2canvas not loaded.');
+                    alert('Download failed: html2canvas not loaded.');
+                    return;
                 }
-
                 console.log('Download Social button clicked, calling html2canvas...');
-
-                html2canvas(preview, { useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-                    canvas.toBlob(blob => {
-                        if (!blob) {
-                            if (status) status.textContent = 'Download failed: Blob conversion failed.';
-                            return alert('Failed to create image blob.');
-                        }
-                        const url = URL.createObjectURL(blob);
+                try {
+                    html2canvas(preview, {useCORS: true, backgroundColor: null}).then(canvas => {
                         const a = document.createElement('a');
-                        a.href = url;
+                        a.href = canvas.toDataURL('image/png');
                         a.download = 'social_post.png';
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        if (status) {
-                            status.textContent = 'Downloaded!';
-                            setTimeout(() => { status.style.display = 'none'; }, 1500);
-                        }
-                    }, 'image/png');
-                }).catch(e => {
-                    console.error('html2canvas error:', e);
+                        if (status) { status.textContent = 'Downloaded!'; setTimeout(() => { status.style.display = 'none'; }, 1500); }
+                    }).catch(e => {
+                        if (status) status.textContent = 'Download failed.';
+                        alert('Download failed: ' + e);
+                        console.error('html2canvas error:', e);
+                    });
+                } catch (e) {
                     if (status) status.textContent = 'Download failed.';
                     alert('Download failed: ' + e);
-                });
+                    console.error('html2canvas error:', e);
+                }
             });
 
-
-            // Offer Pamphlet Download
-            document.getElementById('download-offer-btn')?.addEventListener('click', function () {
+            document.getElementById('download-offer-btn')?.addEventListener('click', function() {
                 const preview = document.getElementById('offer-preview');
                 const status = document.getElementById('download-status-offer');
-
-                if (!preview) return alert('Preview not found!');
-                if (status) {
-                    status.style.display = 'block';
-                    status.textContent = 'Processing download...';
-                }
-
+                if (!preview) { alert('Preview not found!'); return; }
+                if (status) { status.style.display = 'block'; status.textContent = 'Processing download...'; }
                 if (typeof html2canvas !== 'function') {
                     if (status) status.textContent = 'Download failed: html2canvas not loaded.';
-                    return alert('Download failed: html2canvas not loaded.');
+                    alert('Download failed: html2canvas not loaded.');
+                    return;
                 }
-
                 console.log('Download Offer button clicked, calling html2canvas...');
-
-                html2canvas(preview, { useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-                    canvas.toBlob(blob => {
-                        if (!blob) {
-                            if (status) status.textContent = 'Download failed: Blob conversion failed.';
-                            return alert('Failed to create image blob.');
-                        }
-                        const url = URL.createObjectURL(blob);
+                try {
+                    html2canvas(preview, {useCORS: true, backgroundColor: null}).then(canvas => {
                         const a = document.createElement('a');
-                        a.href = url;
+                        a.href = canvas.toDataURL('image/png');
                         a.download = 'offer_pamphlet.png';
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        if (status) {
-                            status.textContent = 'Downloaded!';
-                            setTimeout(() => { status.style.display = 'none'; }, 1500);
-                        }
-                    }, 'image/png');
-                }).catch(e => {
-                    console.error('html2canvas error:', e);
+                        if (status) { status.textContent = 'Downloaded!'; setTimeout(() => { status.style.display = 'none'; }, 1500); }
+                    }).catch(e => {
+                        if (status) status.textContent = 'Download failed.';
+                        alert('Download failed: ' + e);
+                        console.error('html2canvas error:', e);
+                    });
+                } catch (e) {
                     if (status) status.textContent = 'Download failed.';
                     alert('Download failed: ' + e);
-                });
+                    console.error('html2canvas error:', e);
+                }
             });
-
-
 
             // Social Media Post: Fix image upload to show in main preview and include in download
             let uploadedImageDataUrl = null;
@@ -788,12 +761,12 @@
 
             imageUploadBtn?.addEventListener('click', () => imageInput?.click());
 
-            imageInput?.addEventListener('change', function (e) {
+            imageInput?.addEventListener('change', function(e) {
                 if (e.target.files && e.target.files[0]) {
                     const file = e.target.files[0];
                     fileName.textContent = file.name;
                     const reader = new FileReader();
-                    reader.onload = function (e) {
+                    reader.onload = function(e) {
                         uploadedImageDataUrl = e.target.result;
                         imagePreview.src = uploadedImageDataUrl;
                         imagePreviewContainer?.classList.remove('hidden');
@@ -804,7 +777,7 @@
                 }
             });
 
-            removeImageBtn?.addEventListener('click', function () {
+            removeImageBtn?.addEventListener('click', function() {
                 if (imageInput) imageInput.value = '';
                 if (fileName) fileName.textContent = 'No file selected';
                 imagePreviewContainer?.classList.add('hidden');
@@ -832,7 +805,7 @@
 
             // Patch generateSocialPost to include image if uploaded
             const originalGenerateSocialPost = generateSocialPost;
-            window.generateSocialPost = function () {
+            window.generateSocialPost = function() {
                 originalGenerateSocialPost();
                 updateSocialPreviewImage();
             }
