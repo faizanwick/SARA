@@ -232,7 +232,7 @@
                     <div class="flex items-center justify-between mb-6">
                         <h1 class="text-2xl font-bold">Post Scheduler</h1>
                         <div class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-medium">
-                            Daily at 2:00 PM
+                            Set new Time
                         </div>
                     </div>
 
@@ -246,11 +246,11 @@
 
                         <div id="countdown-display" class="flex justify-between text-center">
                             <div class="time-unit rounded-lg p-3 w-1/4 mx-1">
-                                <div id="hours" class="text-2xl font-bold">00</div>
+                                <div id="hours" class="text-2xl font-bold">09</div>
                                 <div class="text-xs opacity-80">Hours</div>
                             </div>
                             <div class="time-unit rounded-lg p-3 w-1/4 mx-1">
-                                <div id="minutes" class="text-2xl font-bold">00</div>
+                                <div id="minutes" class="text-2xl font-bold">12</div>
                                 <div class="text-xs opacity-80">Minutes</div>
                             </div>
                             <div class="time-unit rounded-lg p-3 w-1/4 mx-1">
@@ -654,7 +654,55 @@
             });
 
             // Initialize the countdown timer
-            // initializeTimer();
+            initializeTimer();
+
+            function initializeTimer() {
+                const countdownHours = 9; // Example: 9 hours from now
+                let targetTime = localStorage.getItem('postSchedulerTargetTime');
+
+                if (!targetTime) {
+                    // First time visiting — set the target time
+                    targetTime = new Date().getTime() + countdownHours * 60 * 60 * 1000;
+                    localStorage.setItem('postSchedulerTargetTime', targetTime);
+                } else {
+                    targetTime = parseInt(targetTime, 10);
+                }
+
+                function updateCountdown() {
+                    const now = new Date().getTime();
+                    const distance = targetTime - now;
+
+                    if (distance <= 0) {
+                        document.getElementById('hours').textContent = '00';
+                        document.getElementById('minutes').textContent = '00';
+                        document.getElementById('seconds').textContent = '00';
+                        clearInterval(timerInterval);
+
+                        // Show notification when finished
+                        document.getElementById('notification').classList.remove('hidden');
+
+                        // Optional: reset target time for next countdown
+                        // localStorage.removeItem('postSchedulerTargetTime');
+                        return;
+                    }
+
+                    const hours = Math.floor(distance / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+                }
+
+                updateCountdown(); // Run immediately
+                const timerInterval = setInterval(updateCountdown, 1000);
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                initializeTimer();
+            });
+
 
             // Remove download-email-btn event listener and add/fix copy-email-btn logic
             document.getElementById('copy-email-btn')?.addEventListener('click', function () {
@@ -686,7 +734,7 @@
             });
 
             // Add download button event listeners for all three tabs
-            document.getElementById('download-social-btn')?.addEventListener('click', function() {
+            document.getElementById('download-social-btn')?.addEventListener('click', function () {
                 const preview = document.getElementById('social-preview');
                 const status = document.getElementById('download-status');
                 if (!preview) { alert('Preview not found!'); return; }
@@ -698,7 +746,7 @@
                 }
                 console.log('Download Social button clicked, calling html2canvas...');
                 try {
-                    html2canvas(preview, {useCORS: true, backgroundColor: null}).then(canvas => {
+                    html2canvas(preview, { useCORS: true, backgroundColor: null }).then(canvas => {
                         const a = document.createElement('a');
                         a.href = canvas.toDataURL('image/png');
                         a.download = 'social_post.png';
@@ -718,7 +766,7 @@
                 }
             });
 
-            document.getElementById('download-offer-btn')?.addEventListener('click', function() {
+            document.getElementById('download-offer-btn')?.addEventListener('click', function () {
                 const preview = document.getElementById('offer-preview');
                 const status = document.getElementById('download-status-offer');
                 if (!preview) { alert('Preview not found!'); return; }
@@ -730,7 +778,7 @@
                 }
                 console.log('Download Offer button clicked, calling html2canvas...');
                 try {
-                    html2canvas(preview, {useCORS: true, backgroundColor: null}).then(canvas => {
+                    html2canvas(preview, { useCORS: true, backgroundColor: null }).then(canvas => {
                         const a = document.createElement('a');
                         a.href = canvas.toDataURL('image/png');
                         a.download = 'offer_pamphlet.png';
@@ -761,12 +809,12 @@
 
             imageUploadBtn?.addEventListener('click', () => imageInput?.click());
 
-            imageInput?.addEventListener('change', function(e) {
+            imageInput?.addEventListener('change', function (e) {
                 if (e.target.files && e.target.files[0]) {
                     const file = e.target.files[0];
                     fileName.textContent = file.name;
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         uploadedImageDataUrl = e.target.result;
                         imagePreview.src = uploadedImageDataUrl;
                         imagePreviewContainer?.classList.remove('hidden');
@@ -777,7 +825,7 @@
                 }
             });
 
-            removeImageBtn?.addEventListener('click', function() {
+            removeImageBtn?.addEventListener('click', function () {
                 if (imageInput) imageInput.value = '';
                 if (fileName) fileName.textContent = 'No file selected';
                 imagePreviewContainer?.classList.add('hidden');
@@ -805,7 +853,7 @@
 
             // Patch generateSocialPost to include image if uploaded
             const originalGenerateSocialPost = generateSocialPost;
-            window.generateSocialPost = function() {
+            window.generateSocialPost = function () {
                 originalGenerateSocialPost();
                 updateSocialPreviewImage();
             }
